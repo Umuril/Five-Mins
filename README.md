@@ -9,19 +9,19 @@ Most features are enabled to logged users. You can register to the site and choo
 
 
 ### Project goals
-[ ] Guests can see recently closed works or new requests from users.  [ ] Guests can search by price / time / location  
-[ ] Users can create new requests  
-[ ] Users/Workers can see closed / in progress request (history)  
-[ ] Users <-> Workers can coordinate after match  
-[ ] Users/Workers stars for work done?  
-[ ] Workers can ask for more information before accepting  
-[ ] Workers can have a default time for avalability?  
-[ ] Admin can ban workers/users  
-[ ] Admin can create random data for testing (create users / workers  jobs / close jobs)  
+- [ ] Guests can see recently closed works or new requests from users.  - [ ] Guests can search by price / time / location  
+- [ ] Users can create new requests  
+- [ ] Users/Workers can see closed / in progress request (history)  
+- [ ] Users <-> Workers can coordinate after match  
+- [ ] Users/Workers stars for work done?  
+- [ ] Workers can ask for more information before accepting  
+- [ ] Workers can have a default time for avalability?  
+- [ ] Admin can ban workers/users  
+- [ ] Admin can create random data for testing (create users / workers  jobs / close jobs)  
 
 ### To decide
-[ ] Flow for match users with workers  
-[ ] Allow multiple workers for a single job  
+- [ ] Flow for match users with workers  
+- [ ] Allow multiple workers for a single job  
 
 ### Roles
 Guest (Not logged user)  
