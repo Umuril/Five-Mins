@@ -38,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Third-party appsw
+    # Third-party apps
     'djmoney',
+    'debug_toolbar',
 
     'main.apps.MainConfig'
 ]
@@ -52,6 +53,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Third-party apps
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'five_mins.urls'
@@ -130,3 +134,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://github.com/django-money/django-money
 
 CURRENCIES = ('EUR', 'USD')
+
+# https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
