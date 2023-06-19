@@ -1,33 +1,35 @@
 # Five-Mins
-## Website to allow people that need some help, find someone that has some free time.
+## Connecting People in Need with Available Help
+
+Five-Mins is a website dedicated to fostering a supportive community by connecting individuals in need of assistance with those who have available free time. Our platform allows people to find help when they need it most.
 
 ### Website Features
-Most features are enabled to logged users. You can register to the site and choose if you are here for work or for asking a help.
+Most features are available to registered users. Upon registration, you can specify whether you are here for work or to ask for help.
 
-### Tech
+### Technology Used
 - Django
 
+### Project Goals
+- [ ] Guests can view recently closed works or new requests from users.
+- [ ] Guests can search for requests based on price, time, or location.
+- [ ] Users can create new assistance requests.
+- [ ] Users and workers can view closed and in-progress requests (history).
+- [ ] Users and workers can coordinate and communicate after a match is made.
+- [ ] Workers can request additional information before accepting a job.
+- [ ] The admin has the ability to ban workers and users.
+- [ ] The admin can generate random data for testing purposes (e.g., create users, workers, jobs, and close jobs).
 
-### Project goals
-- [ ] Guests can see recently closed works or new requests from users.  - [ ] Guests can search by price / time / location  
-- [ ] Users can create new requests  
-- [ ] Users/Workers can see closed / in progress request (history)  
-- [ ] Users <-> Workers can coordinate after match  
-- [ ] Users/Workers stars for work done?  
-- [ ] Workers can ask for more information before accepting  
-- [ ] Workers can have a default time for avalability?  
-- [ ] Admin can ban workers/users  
-- [ ] Admin can create random data for testing (create users / workers  jobs / close jobs)  
-
-### To decide
-- [ ] Flow for match users with workers  
-- [ ] Allow multiple workers for a single job  
+### Pending Decisions
+- [ ] Determine the flow for matching users with workers.
+- [ ] Allow multiple workers to work on a single job.
+- [ ] Implement a rating system where users and workers can rate each other based on the quality of work done.
+- [ ] Enable workers to set their default availability time.
 
 ### Roles
-Guest (Not logged user)  
-User (Any logged user)  
-Worker (Any registred user that offers work)  
-Admin (Website Admin)  
+- Guest (Not logged in user)
+- User (Logged in user)
+- Worker (Registered user offering assistance)
+- Admin (Website administrator)
 
 ### Screenshot
-To do  
+Screenshot to be added.
