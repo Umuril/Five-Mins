@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from djmoney.models.fields import MoneyField
 
-class Job(models.Model):
+class Hand(models.Model):
     title = models.CharField(max_length=50)
     description = models.CharField(null=True, blank=True, max_length=255)
     
@@ -21,5 +21,5 @@ class Job(models.Model):
     over_time = models.DateTimeField(null=True, blank=True, editable=False)
 
     def __str__(self):
-        return self.title
+        return self.title + ' requested by ' + self.requester.username
     
