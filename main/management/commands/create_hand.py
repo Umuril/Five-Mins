@@ -1,11 +1,12 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User
 
-from model_bakery import baker
-
+from faker import Faker
 from ...models import Hand
 
 import random
+from datetime import UTC
+from djmoney.money import Money
 
 class Command(BaseCommand):
     help = 'Create a fake Hand'
@@ -17,13 +18,25 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         count = kwargs['num'] if kwargs['num'] else 1
 
-        for idx in range(count):
-            random_prefix = random.choices(['USER-', 'WORKER-'], cum_weights=[4, 5])[0] # One worker every five users
-            requester = User.objects.filter(username__startswith=random_prefix).order_by("?").first()
+        faker = Faker(['it_IT']) # https://faker.readthedocs.io/en/master/providers.html
 
-            hand = baker.prepare(Hand)
+        for idx in range(count):
+            requester = User.objects.order_by("?").first()
+
+            hand = Hand()
+
+            hand.title = faker.job()
+            hand.description = faker.paragraph()
+            hand.request_location = faker.address()
+            hand.request_price = Money(faker.pyfloat(left_digits=3, right_digits=2, positive=True), 'EUR')
 
             hand.requester = requester
+            hand.request_start_time = faker.future_datetime().replace(tzinfo=UTC)
+
+            a = faker.future_datetime().replace(tzinfo=UTC)
+            b = faker.future_datetime().replace(tzinfo=UTC)
+            delta = a - b if a > b else b - a
+            hand.request_duration = delta
 
             hand.save()
 

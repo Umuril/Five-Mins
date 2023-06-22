@@ -1,7 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.models import User, Group
 
-from model_bakery import baker
+from faker import Faker
+from ...models import Profile
+import random
 
 class Command(BaseCommand):
     help = 'Create a Worker user'
@@ -12,21 +14,38 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         try:
             workers = Group.objects.get(name='Workers')
+            test_users = Group.objects.get(name='Test Users')
         except Group.DoesNotExist:
             raise CommandError('"python3 manage.py init" command is required first.')
 
         count = kwargs['num'] if kwargs['num'] else 1
+
+        faker = Faker(['it_IT']) # https://faker.readthedocs.io/en/master/providers.html
         
         for idx in range(count):
-            user = baker.prepare(User)
+            gender = random.choice(['M', 'F'])
+            
+            user = User()
 
-            key =  user.username[:5].capitalize()
+            if gender == 'M':
+                user.first_name = faker.first_name_male()
+                user.last_name = faker.last_name_male()
+            elif gender == 'F':
+                user.first_name = faker.first_name_female()
+                user.last_name = faker.last_name_female()
+            domain_name = faker.domain_name()
+            
+            user.username = f"{user.first_name[0].lower()}.{user.last_name.lower()}"
 
-            user.username = f"WORKER-{key}"
-            user.set_password(key)
+            user.email = f"{user.username}@{domain_name}"
+
+            user.set_password('password')
             user.save()
 
             user.groups.add(workers)
+            user.groups.add(test_users)
             user.save()
 
-            print(f"[{idx + 1}] User {user.username} created with password {key}")
+            Profile(user=user, gender=gender).save()
+
+            print(f"[{idx + 1}] Worker {user.username} created.")

@@ -3,4 +3,4 @@ Django
 sqlparse
 django-money
 django-debug-toolbar
-model_bakery
+faker

@@ -133,7 +133,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # https://github.com/django-money/django-money
 
-CURRENCIES = ('EUR', 'USD')
+CURRENCIES = ('EUR', )
 
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
 

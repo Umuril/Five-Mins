@@ -1,6 +1,17 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from djmoney.models.fields import MoneyField
+
+GENDER_CHOICES = [
+    ("M", "Male"),
+    ("F", "Female"),
+]
+
+# https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#extending-user
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+
 
 class Hand(models.Model):
     title = models.CharField(max_length=50)
