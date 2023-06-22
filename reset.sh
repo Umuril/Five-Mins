@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ##### CLEAN UP PHASE #####
-python3 manage.py flush --noinput
+rm -f db.sqlite3
 rm -fr main/migrations
 ##### CLEAN UP PHASE #####
 

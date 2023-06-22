@@ -5,7 +5,7 @@ from faker import Faker
 from ...models import Hand
 
 import random
-from datetime import UTC
+from datetime import UTC, date, datetime
 from djmoney.money import Money
 
 class Command(BaseCommand):
@@ -31,13 +31,14 @@ class Command(BaseCommand):
             hand.request_price = Money(faker.pyfloat(left_digits=3, right_digits=2, positive=True), 'EUR')
 
             hand.requester = requester
-            hand.request_start_time = faker.future_datetime().replace(tzinfo=UTC)
-
-            a = faker.future_datetime().replace(tzinfo=UTC)
-            b = faker.future_datetime().replace(tzinfo=UTC)
-            delta = a - b if a > b else b - a
-            hand.request_duration = delta
-
+            hand.request_date = faker.future_date()
+            
+            a = faker.time_object()
+            b = faker.time_object()
+            
+            hand.request_start_time = min(a, b)
+            hand.request_end_time = max(a, b)
+            
             hand.save()
 
             print(f"[{idx + 1}] Hand {hand} created")
