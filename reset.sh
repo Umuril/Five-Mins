@@ -20,4 +20,9 @@ python3 manage.py init
 python3 manage.py create_user -n 10
 python3 manage.py create_worker -n 10
 python3 manage.py create_hand -n 10
+python3 manage.py create_submit -n 10
+python3 manage.py reserve_hand -n 10
+python3 manage.py progress_hand --wip -n 10
+python3 manage.py progress_hand --done -n 10
+python3 manage.py rate_hand -n 21
 ##### CUSTOM PHASE #####
