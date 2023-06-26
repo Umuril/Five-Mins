@@ -7,7 +7,7 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Hello, world!</h1>
+    <h1>Hello, {{ user.first_name | default:"world" }}!</h1>
     {% if user.is_authenticated %}
         <a href="/accounts/logout/?next=/main/">Log out</a>
     {% else %}
