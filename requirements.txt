@@ -4,3 +4,4 @@ sqlparse
 django-money
 django-debug-toolbar
 faker
+pre-commit
