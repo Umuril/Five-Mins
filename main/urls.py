@@ -20,6 +20,6 @@ from django.urls import path, include
 from .views import *
 
 urlpatterns = [
-    path('', main.homepage),
-    path('data', datagen.debug),
+    path("", main.homepage),
+    path("data", datagen.debug),
 ]
