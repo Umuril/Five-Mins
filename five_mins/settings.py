@@ -140,3 +140,10 @@ CURRENCIES = ('EUR', )
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+# https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#authentication-backends
+
+AUTHENTICATION_BACKENDS = [
+    "main.auth.PasswordlessTestBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
