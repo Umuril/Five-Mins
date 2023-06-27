@@ -37,9 +37,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Third-party apps
+    # START - Third-party apps - START
     "djmoney",
     "debug_toolbar",
+    # END   - Third-party apps -   END
     "main.apps.MainConfig",
 ]
 
@@ -144,3 +145,7 @@ AUTHENTICATION_BACKENDS = [
     "main.auth.PasswordlessTestBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
+
+# https://stackoverflow.com/questions/15467831/django-logout-redirects-me-to-administration-page
+
+LOGOUT_REDIRECT_URL = "homepage"
