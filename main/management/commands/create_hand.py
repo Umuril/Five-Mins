@@ -16,7 +16,7 @@ def create_open_hand(faker):
 
     hand.title = faker.job()
     hand.description = faker.paragraph()
-    hand.request_location = faker.address()
+    # hand.request_location = faker.address()
     hand.request_price = Money(
         faker.pyfloat(left_digits=3, right_digits=2, positive=True), "EUR"
     )

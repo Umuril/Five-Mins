@@ -20,6 +20,10 @@ from django.urls import path, include
 from .views import *
 
 urlpatterns = [
-    path("", main.homepage),
+    path("", main.homepage, name="homepage"),
+    path("hand/add/", main.HandCreateView.as_view(), name="hand-add"),
+    path("hand/<int:pk>/", main.HandDetailView.as_view(), name="hand-detail"),
+    path("hand/<int:pk>/update/", main.HandUpdateView.as_view(), name="hand-update"),
+    path("hand/<int:pk>/delete/", main.HandDeleteView.as_view(), name="hand-delete"),
     path("data", datagen.debug),
 ]

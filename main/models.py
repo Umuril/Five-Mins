@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser
 from djmoney.models.fields import MoneyField
@@ -45,7 +46,7 @@ class Hand(models.Model):
     request_end_time = models.TimeField()
     # request_duration = models.DurationField()
 
-    request_location = models.CharField(null=True, blank=True, max_length=255)  # FIXME
+    # request_location = models.CharField(null=True, blank=True, max_length=255)  # FIXME
     request_price = MoneyField(
         null=True,
         blank=True,
@@ -69,7 +70,10 @@ class Hand(models.Model):
     submits = models.ManyToManyField(User, related_name="submits")
 
     def __str__(self):
-        return self.title + " requested by " + self.requester.username
+        return f"[{self.status}] '{self.title}' requested by {self.requester.username} for day {self.request_date} from {self.request_start_time} to {self.request_end_time} paying {self.request_price}"
+
+    def get_absolute_url(self):
+        return reverse("hand-detail", kwargs={"pk": self.pk})
 
     class Meta:
         constraints = [
