@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 URL configuration for five_mins project.
 
@@ -14,16 +15,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 
-from .views import *
+from .views import datagen, main
 
 urlpatterns = [
-    path("", main.homepage, name="homepage"),
-    path("hand/add/", main.HandCreateView.as_view(), name="hand-add"),
-    path("hand/<int:pk>/", main.HandDetailView.as_view(), name="hand-detail"),
-    path("hand/<int:pk>/update/", main.HandUpdateView.as_view(), name="hand-update"),
-    path("hand/<int:pk>/delete/", main.HandDeleteView.as_view(), name="hand-delete"),
-    path("data", datagen.debug),
+    path('', main.homepage, name='homepage'),
+    path('hand/add/', main.HandCreateView.as_view(), name='hand-add'),
+    path('hand/<int:pk>/', main.HandDetailView.as_view(), name='hand-detail'),
+    path(
+        'hand/<int:pk>/update/',
+        main.HandUpdateView.as_view(),
+        name='hand-update'),
+    path(
+        'hand/<int:pk>/delete/',
+        main.HandDeleteView.as_view(),
+        name='hand-delete'),
+    path('data', datagen.debug),
 ]

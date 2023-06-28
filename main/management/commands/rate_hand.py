@@ -1,14 +1,9 @@
+# -*- coding: utf-8 -*-
 from django.core.management.base import BaseCommand, CommandError
-from django.contrib.auth.models import User
-from django.db.models import Count
 from django.db.models import Q
-
 from faker import Faker
-from ...models import Hand
 
-import random
-from datetime import UTC, date, datetime, time
-from djmoney.money import Money
+from main.models import Hand
 
 
 def rate_hand(faker):
@@ -16,11 +11,11 @@ def rate_hand(faker):
         Hand.objects.filter(
             Q(request_stars=None) | Q(work_stars=None), status=Hand.Status.DONE
         )
-        .order_by("?")
+        .order_by('?')
         .first()
     )
     if hand is None:
-        raise CommandError("No available Hands to rate.")
+        raise CommandError('No available Hands to rate.')
 
     rate_value = faker.enum(Hand.StarsAnswer)
 
@@ -38,16 +33,17 @@ def rate_hand(faker):
 
 
 class Command(BaseCommand):
-    help = "Fakes a rating for a Hand"
+    help = 'Fakes a rating for a Hand'
 
     def add_arguments(self, parser):
-        parser.add_argument("-n", "--num", type=int, help="Applies to multiple Hands")
+        parser.add_argument('-n', '--num', type=int,
+                            help='Applies to multiple Hands')
 
     def handle(self, *args, **kwargs):
-        count = kwargs["num"] if kwargs["num"] else 1
+        count = kwargs['num'] if kwargs['num'] else 1
 
         faker = Faker(
-            ["it_IT"]
+            ['it_IT']
         )  # https://faker.readthedocs.io/en/master/providers.html
 
         for idx in range(count):

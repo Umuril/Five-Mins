@@ -1,26 +1,20 @@
+# -*- coding: utf-8 -*-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
-from django.views.generic import (
-    TemplateView,
-    FormView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-    DetailView,
-)
-from ..forms import HandForm
-from ..models import Hand
-from django import forms
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
+
+from main.forms import HandForm
+from main.models import Hand
 
 
 # Create your views here.
 def homepage(request):
-    hands = Hand.objects.all().select_related("requester")
+    hands = Hand.objects.all().select_related('requester')
     my_hands = Hand.objects.filter(requester=request.user.pk).select_related(
-        "requester"
+        'requester'
     )
     return render(
-        request, "main/homepage.html", context={"hands": hands, "my_hands": my_hands}
+        request, 'main/homepage.html', context={'hands': hands, 'my_hands': my_hands}
     )
 
 

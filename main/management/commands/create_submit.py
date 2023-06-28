@@ -1,37 +1,31 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.contrib.auth.models import User
+# -*- coding: utf-8 -*-
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand
 
-from faker import Faker
-from ...models import Hand
-
-import random
-from datetime import UTC, date, datetime
-from djmoney.money import Money
+from main.models import Hand
 
 
-def create_submit(faker):
-    hand = Hand.objects.filter(status=Hand.Status.OPEN).order_by("?").first()
-    worker = User.objects.filter(groups__name="Workers").order_by("?").first()
+def create_submit():
+    hand = Hand.objects.filter(status=Hand.Status.OPEN).order_by('?').first()
+    worker = get_user_model().objects.filter(
+        groups__name='Workers').order_by('?').first()
     hand.submits.add(worker)
 
     return hand, worker
 
 
 class Command(BaseCommand):
-    help = "Create a fake Submit"
+    help = 'Create a fake Submit'
 
     def add_arguments(self, parser):
-        parser.add_argument("-n", "--num", type=int, help="Create multiple Submits")
+        parser.add_argument('-n', '--num', type=int,
+                            help='Create multiple Submits')
 
     def handle(self, *args, **kwargs):
-        count = kwargs["num"] if kwargs["num"] else 1
-
-        faker = Faker(
-            ["it_IT"]
-        )  # https://faker.readthedocs.io/en/master/providers.html
+        count = kwargs['num'] if kwargs['num'] else 1
 
         for idx in range(count):
-            hand, worker = create_submit(faker)
+            hand, worker = create_submit()
             hand.save()
 
             print(f"[{idx + 1}] Submit for hand '{hand}' created by {worker}")

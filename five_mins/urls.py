@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 URL configuration for five_mins project.
 
@@ -15,11 +16,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import include, path
 
 urlpatterns = [
-    path("", include("main.urls")),
-    path("admin/", admin.site.urls),
-    path("__debug__/", include("debug_toolbar.urls")),
-    path("accounts/", include("django.contrib.auth.urls")),
+    path('', include('main.urls')),
+    path('admin/', admin.site.urls),
+    path('__debug__/', include('debug_toolbar.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]

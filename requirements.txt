@@ -1,7 +1,8 @@
 asgiref
-Django
-sqlparse
-django-money
+django
 django-debug-toolbar
+django-money
 faker
 pre-commit
+pylint_django
+sqlparse

@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import BaseBackend
-from django.contrib.auth.models import Group, User
 
 
 class PasswordlessTestBackend(BaseBackend):
-    def authenticate(self, request, username=None, password=None):
-        return User.objects.filter(groups__name="Test Users", username=username).first()
+    def authenticate(self, *args, username=None, **kwargs):
+        return get_user_model().objects.filter(
+            groups__name='Test Users', username=username).first()
 
     def get_user(self, user_id):
-        return User.objects.filter(groups__name="Test Users", pk=user_id).first()
+        return get_user_model().objects.filter(
+            groups__name='Test Users', pk=user_id).first()

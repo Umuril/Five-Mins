@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 ASGI config for five_mins project.
 
@@ -11,6 +12,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "five_mins.settings")
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'five_mins.settings')
 
 application = get_asgi_application()
