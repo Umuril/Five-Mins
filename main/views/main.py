@@ -15,7 +15,13 @@ from django import forms
 
 # Create your views here.
 def homepage(request):
-    return render(request, "main/index.html", context={"test_check": "ok"})
+    hands = Hand.objects.all().select_related("requester")
+    my_hands = Hand.objects.filter(requester=request.user.pk).select_related(
+        "requester"
+    )
+    return render(
+        request, "main/homepage.html", context={"hands": hands, "my_hands": my_hands}
+    )
 
 
 class HandCreateView(LoginRequiredMixin, CreateView):

@@ -1,7 +1,5 @@
 from django import forms
 from .models import Hand
-from mapbox_location_field.models import LocationField
-from location_field.forms.plain import PlainLocationField
 
 
 class HandForm(forms.ModelForm):
@@ -20,6 +18,10 @@ class HandForm(forms.ModelForm):
             # https://stackoverflow.com/questions/22846048/django-form-as-p-datefield-not-showing-input-type-as-date
             "description": forms.Textarea(),
             "request_date": forms.DateInput(attrs={"type": "date"}),
-            "request_start_time": forms.DateInput(attrs={"type": "time"}),
-            "request_end_time": forms.DateInput(attrs={"type": "time"}),
+            "request_start_time": forms.TimeInput(
+                format="%H:%M", attrs={"type": "time", "pattern": r"[0-9]{2}:[0-9]{2}"}
+            ),
+            "request_end_time": forms.TimeInput(
+                format="%H:%M", attrs={"type": "time", "pattern": r"[0-9]{2}:[0-9]{2}"}
+            ),
         }

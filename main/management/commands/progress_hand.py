@@ -20,10 +20,12 @@ def progress_hand(faker, option):
         hand.request_date = date.today()
 
         while hand.request_start_time >= datetime.now().time():
-            hand.request_start_time = faker.time_object()
+            hand.request_start_time = faker.time_object().replace(
+                second=0, microsecond=0
+            )
 
         while hand.request_end_time <= datetime.now().time():
-            hand.request_end_time = faker.time_object()
+            hand.request_end_time = faker.time_object().replace(second=0, microsecond=0)
     elif option == "done":
         hand = (
             Hand.objects.filter(

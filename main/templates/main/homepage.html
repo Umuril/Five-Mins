@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+    <form action="{% url 'hand-add' %}">
+        <input type="submit" value="New &#128588;">
+    </form>
+{% endif %}
+
+
+{% if my_hands %}
+<h5>List of User Hands</h5>
+<ul>
+    {% for hand in my_hands %}
+        <li><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
+    {% endfor %}
+</ul>
+
+<hr>
+{% endif %}
+
+<h5>List of Hands</h5>
+<ul>
+    {% for hand in hands %}
+        <li><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

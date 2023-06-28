@@ -1,20 +1,21 @@
-from django.core.management.base import BaseCommand, CommandError
-from django.contrib.auth.models import User
-
-from faker import Faker
-from ...models import Hand
-
-import random
-from datetime import UTC, date, datetime
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand
 from djmoney.money import Money
+from faker import Faker
+
+from main.models import Hand
 
 
 def create_open_hand(faker):
+    User = get_user_model()
     requester = User.objects.order_by("?").first()
 
     hand = Hand()
 
-    hand.title = faker.job()
+    job = faker.job()
+    while len(job) > 50:
+        job = faker.job()
+    hand.title = job
     hand.description = faker.paragraph()
     # hand.request_location = faker.address()
     hand.request_price = Money(
@@ -24,8 +25,8 @@ def create_open_hand(faker):
     hand.requester = requester
     hand.request_date = faker.future_date()
 
-    a = faker.time_object()
-    b = faker.time_object()
+    a = faker.time_object().replace(second=0, microsecond=0)
+    b = faker.time_object().replace(second=0, microsecond=0)
 
     hand.request_start_time = min(a, b)
     hand.request_end_time = max(a, b)
