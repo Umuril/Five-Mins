@@ -7,11 +7,19 @@
     <meta name="description" content="TODO">
     <meta name="keywords" content="TODO">
     <title>Document</title>
+    <style>
+        {% block page-css %}{% endblock page-css %}
+    </style>
 </head>
 <body>
     <h1>Hello, {{ user.first_name | default:"world" }}!</h1>
 
     <a href="{% url 'homepage' %}">Home</a>
+
+    {% if user.is_authenticated %}
+        <a href="{% url 'history' %}">History</a>
+    {% endif %}
+
     {% if user.is_authenticated %}
         <a href="{% url 'logout' %}?next={% url 'homepage' %}">Log out</a>
     {% else %}
@@ -19,7 +27,7 @@
     {% endif %}
 
     {% if user.is_staff %}
-    <a href="{% url 'admin:index' %}">Admin</a>
+        <a href="{% url 'admin:index' %}">Admin</a>
     {% endif %}
 
     <hr>

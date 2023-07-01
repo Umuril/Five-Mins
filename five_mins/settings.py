@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # START - Third-party apps - START
     'djmoney',
     'debug_toolbar',
+    'django_apscheduler',
     # END   - Third-party apps -   END
     'main.apps.MainConfig',
 ]

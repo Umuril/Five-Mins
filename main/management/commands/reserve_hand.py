@@ -6,13 +6,8 @@ from main.models import Hand
 
 
 def reserve_hand():
-    hand = (
-        Hand.objects.filter(status=Hand.Status.OPEN)
-        .annotate(submits_count=Count('submits'))
-        .filter(submits_count__gt=0)
-        .order_by('?')
-        .first()
-    )
+    hand = Hand.objects.filter(status=Hand.Status.OPEN).annotate(submits_count=Count('submits')).filter(submits_count__gt=0).order_by('?').first()
+
     if hand is None:
         raise CommandError('No available Hands to reserve.')
 
@@ -28,8 +23,7 @@ class Command(BaseCommand):
     help = 'Fakes reserving a Hand'
 
     def add_arguments(self, parser):
-        parser.add_argument('-n', '--num', type=int,
-                            help='Fakes multiple reserves')
+        parser.add_argument('-n', '--num', type=int, help='Fakes multiple reserves')
 
     def handle(self, *args, **kwargs):
         count = kwargs['num'] if kwargs['num'] else 1
@@ -38,4 +32,4 @@ class Command(BaseCommand):
             hand, worker = reserve_hand()
             hand.save()
 
-            print(f"[{idx + 1}] Hand '{hand}' reserved to {worker}")
+            print(f'[{idx + 1}] Hand {hand} reserved to {worker}')

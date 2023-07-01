@@ -1,5 +1,6 @@
 asgiref
 django
+django-apscheduler
 django-debug-toolbar
 django-money
 faker

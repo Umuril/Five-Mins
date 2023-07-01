@@ -50,7 +50,7 @@ repos:
     rev: v2.0.2
     hooks:
       - id: autopep8
-        args: ['--in-place', '--aggressive']
+        args: ['--in-place', '-aaa', '--max-line-length', '150']
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
@@ -64,5 +64,5 @@ repos:
     hooks:
       - id: pylint
         exclude: "(.*/(migrations)/.*|manage.py)"
-        args: ["--rcfile=.pylintrc", "--load-plugins=pylint_django", "--django-settings-module=five_mins.settings" ]
-        additional_dependencies: ['pylint_django', 'asgiref', 'django', 'django-debug-toolbar', 'django-money', 'faker', 'pre-commit', 'sqlparse']
+        args: ["--rcfile=.pylintrc", "--load-plugins=pylint_django", "--django-settings-module=five_mins.settings", "--max-line-length=150"]
+        additional_dependencies: ['pylint_django', 'asgiref', 'django', 'django-debug-toolbar', 'django-money', 'faker', 'pre-commit', 'sqlparse', 'django_apscheduler']

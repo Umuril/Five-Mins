@@ -1,18 +1,34 @@
 {% extends "base.html" %}
 
+{% block page-css %}
+.title {
+    text-align: center;
+}
+{% endblock page-css %}
+
 {% block content %}
 
 {% if user.is_authenticated %}
-    <form action="{% url 'hand-add' %}">
-        <input type="submit" value="New 🙌">
-    </form>
+    <h1 class="title"><a href="{% url 'hand-add' %}">🙌 New 🙌</a></h1>
+    <hr>
 {% endif %}
 
 {% if my_hands %}
-<h5>List of User Hands</h5>
+<h5>My Hands</h5>
 <ul>
     {% for hand in my_hands %}
-        <li><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
+        <li style="list-style-type: {% if hand.status == 'I' %}'🔴 '{% endif %}{% if hand.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
+    {% endfor %}
+</ul>
+
+<hr>
+{% endif %}
+
+{% if my_submits %}
+<h5>My submits</h5>
+<ul>
+    {% for hand in my_submits %}
+        <li style="list-style-type: {% if hand.status == 'I' %}'🔴 '{% endif %}{% if hand.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
     {% endfor %}
 </ul>
 
@@ -21,9 +37,11 @@
 
 <h5>List of Hands</h5>
 <ul>
-    {% for hand in hands %}
-        <li><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
+    {% for hand in last_updated_hands %}
+        <li style="list-style-type: {% if hand.status == 'I' %}'🔴 '{% endif %}{% if hand.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
     {% endfor %}
 </ul>
+
+<hr>
 
 {% endblock content %}

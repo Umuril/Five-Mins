@@ -15,8 +15,7 @@ GENDER_CHOICES = [
 
 # https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#extending-user
 class Profile(models.Model):
-    user = models.OneToOneField(
-        get_user_model(), on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, primary_key=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 
 
@@ -38,11 +37,8 @@ class Hand(models.Model):
     title = models.CharField(max_length=50)
     description = models.CharField(null=True, blank=True, max_length=255)
 
-    requester = models.ForeignKey(
-        get_user_model(), on_delete=models.PROTECT, related_name='requests'
-    )
-    status = models.CharField(
-        max_length=1, choices=Status.choices, default=Status.OPEN)
+    requester = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='requests')
+    status = models.CharField(max_length=1, choices=Status.choices, default=Status.OPEN)
 
     request_date = models.DateField()
     request_start_time = models.TimeField()
@@ -57,20 +53,16 @@ class Hand(models.Model):
         editable=True,
     )
 
-    assigned_to = models.ForeignKey(
-        get_user_model(), null=True, blank=True, on_delete=models.PROTECT, related_name='works'
-    )
+    assigned_to = models.ForeignKey(get_user_model(), null=True, blank=True, on_delete=models.PROTECT, related_name='works')
 
-    request_stars = models.IntegerField(
-        null=True, blank=True, choices=StarsAnswer.choices
-    )
-    work_stars = models.IntegerField(
-        null=True, blank=True, choices=StarsAnswer.choices)
+    request_stars = models.IntegerField(null=True, blank=True, choices=StarsAnswer.choices)
+    work_stars = models.IntegerField(null=True, blank=True, choices=StarsAnswer.choices)
 
-    creation_time = models.DateTimeField(
-        null=False, editable=False, auto_now_add=True)
+    creation_time = models.DateTimeField(null=False, editable=False, auto_now_add=True)
 
-    submits = models.ManyToManyField(get_user_model(), related_name='submits')
+    update_time = models.DateTimeField(null=False, editable=False, auto_now=True)
+
+    submits = models.ManyToManyField(get_user_model(), through='HandSubmit')
 
     def __str__(self):
         desc_str = f"'{self.title}' requested by {self.requester.username}"
@@ -83,18 +75,23 @@ class Hand(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                check=Q(request_start_time__lt=F('request_end_time')),
+                check=Q(
+                    request_start_time__lt=F('request_end_time')),
                 name='request_start_time must be less than request_end_time',
-            )
-        ]
+            )]
+
+
+class HandSubmit(models.Model):
+    hand = models.ForeignKey(Hand, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    submit_time = models.DateTimeField(null=False, editable=False, auto_now_add=True)
 
 
 @receiver(pre_save, sender=Hand)
 def both_have_rated(sender, instance, *args, **kwargs):
     # pylint: disable=unused-argument
-    if (
-        instance.status == Hand.Status.DONE
-        and instance.request_stars
-        and instance.work_stars
-    ):
+    if instance.status == Hand.Status.DONE and instance.request_stars and instance.work_stars:
         instance.status = Hand.Status.CLOSED
+
+    if instance.status == Hand.Status.OPEN and instance.assigned_to:
+        instance.status = Hand.Status.RESERVED

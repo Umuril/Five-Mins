@@ -17,19 +17,27 @@ Including another URLconf
 """
 from django.urls import path
 
-from .views import datagen, main
+from .views import main
 
 urlpatterns = [
     path('', main.homepage, name='homepage'),
     path('hand/add/', main.HandCreateView.as_view(), name='hand-add'),
     path('hand/<int:pk>/', main.HandDetailView.as_view(), name='hand-detail'),
     path(
-        'hand/<int:pk>/update/',
-        main.HandUpdateView.as_view(),
-        name='hand-update'),
-    path(
         'hand/<int:pk>/delete/',
         main.HandDeleteView.as_view(),
         name='hand-delete'),
-    path('data', datagen.debug),
+    path(
+        'hand/<int:hand_pk>/submit/',
+        main.submit,
+        name='hand-submit'),
+    path(
+        'hand/<int:hand_pk>/assign_to/<int:user_pk>/',
+        main.assing_to,
+        name='hand-assign_to'),
+    path(
+        'hand/<int:hand_pk>/rating/',
+        main.rating,
+        name='hand-rating'),
+    path('history', main.history, name='history'),
 ]

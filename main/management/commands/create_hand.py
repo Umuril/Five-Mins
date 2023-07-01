@@ -8,8 +8,7 @@ from main.models import Hand
 
 
 def create_open_hand(faker):
-    requester = get_user_model().objects.filter(
-        groups__name='Test Users').order_by('?').first()
+    requester = get_user_model().objects.filter(groups__name='Test Users').order_by('?').first()
 
     hand = Hand()
 
@@ -20,14 +19,24 @@ def create_open_hand(faker):
     hand.description = faker.paragraph()
     # hand.request_location = faker.address()
     hand.request_price = Money(
-        faker.pyfloat(left_digits=3, right_digits=2, positive=True), 'EUR'
-    )
+        faker.pyfloat(
+            left_digits=faker.pyint(
+                min_value=1,
+                max_value=3),
+            right_digits=faker.pyint(
+                min_value=0,
+                max_value=2),
+            positive=True),
+        'EUR')
 
     hand.requester = requester
     hand.request_date = faker.future_date()
 
     time_one = faker.time_object().replace(second=0, microsecond=0)
     time_two = faker.time_object().replace(second=0, microsecond=0)
+
+    while time_one == time_two:
+        time_two = faker.time_object().replace(second=0, microsecond=0)
 
     hand.request_start_time = min(time_one, time_two)
     hand.request_end_time = max(time_one, time_two)
@@ -39,19 +48,16 @@ class Command(BaseCommand):
     help = 'Create a fake Hand'
 
     def add_arguments(self, parser):
-        parser.add_argument('-n', '--num', type=int,
-                            help='Create multiple Hands')
+        parser.add_argument('-n', '--num', type=int, help='Create multiple Hands')
 
     def handle(self, *args, **kwargs):
         count = kwargs['num'] if kwargs['num'] else 1
 
-        faker = Faker(
-            ['it_IT']
-        )  # https://faker.readthedocs.io/en/master/providers.html
+        faker = Faker(['it_IT'])  # https://faker.readthedocs.io/en/master/providers.html
 
         for idx in range(count):
             hand = create_open_hand(faker)
 
             hand.save()
 
-            print(f"[{idx + 1}] {hand.status} Hand '{hand}' created ")
+            print(f'[{idx + 1}] Hand {hand} created ')
