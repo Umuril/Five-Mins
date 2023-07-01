@@ -8,6 +8,7 @@ from main.models import Hand
 def create_submit():
     hand = Hand.objects.filter(status=Hand.Status.OPEN).order_by('?').first()
     worker = get_user_model().objects.filter(
+        groups__name='Test Users').filter(
         groups__name='Workers').order_by('?').first()
     hand.submits.add(worker)
 

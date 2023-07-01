@@ -8,7 +8,8 @@ from main.models import Hand
 
 
 def create_open_hand(faker):
-    requester = get_user_model().objects.order_by('?').first()
+    requester = get_user_model().objects.filter(
+        groups__name='Test Users').order_by('?').first()
 
     hand = Hand()
 

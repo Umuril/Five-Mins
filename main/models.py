@@ -90,7 +90,8 @@ class Hand(models.Model):
 
 
 @receiver(pre_save, sender=Hand)
-def both_have_rated(_sender, instance, *args, **kwargs):
+def both_have_rated(sender, instance, *args, **kwargs):
+    # pylint: disable=unused-argument
     if (
         instance.status == Hand.Status.DONE
         and instance.request_stars

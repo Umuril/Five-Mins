@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 
 from main.forms import HandForm
@@ -27,14 +28,21 @@ class HandCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class HandUpdateView(LoginRequiredMixin, UpdateView):
+class HandUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Hand
     form_class = HandForm
 
+    def test_func(self):
+        return self.get_object().requester.pk == self.request.user.pk
 
-class HandDeleteView(LoginRequiredMixin, DeleteView):
+
+class HandDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Hand
-    form_class = HandForm
+    # form_class = HandForm
+    success_url = reverse_lazy('homepage')
+
+    def test_func(self):
+        return self.get_object().requester.pk == self.request.user.pk
 
 
 class HandDetailView(LoginRequiredMixin, DetailView):

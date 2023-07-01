@@ -4,6 +4,10 @@
 
 <br/>Created:
 <br/>{{ object }}
-<br><a href="{% url 'hand-update' object.pk %}">Edit</a>
+
+{% if user.pk == object.requester.pk %}
+    <br><a href="{% url 'hand-update' object.pk %}">Edit</a>
+    <br><a href="{% url 'hand-delete' object.pk %}">Delete</a>
+{% endif %}
 
 {% endblock content %}
