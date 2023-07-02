@@ -12,7 +12,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView
 
 from main.forms import KnockForm
-from main.models import Knock, KnockSubmit
+from main.models import Knock, KnockChat, KnockChatMessage, KnockSubmit
 
 
 def homepage(request):
@@ -186,3 +186,52 @@ def search(request):
     ctx = {'results': results, 'url_params': url_params}
 
     return render(request, 'main/search.html', context=ctx)
+
+
+@login_required
+def chat(request, knock_pk, user_pk):
+
+    if request.method == 'POST':
+        text = request.POST.get('text', '')
+
+        knock_chat = get_object_or_404(KnockChat, knock=knock_pk, user=user_pk)
+
+        if request.user.pk == knock_chat.knock.requester.pk:
+            receiver = knock_chat.user
+        elif request.user.pk == knock_chat.user.pk:
+            receiver = knock_chat.knock.requester
+        else:
+            raise PermissionDenied('User id errors on chat')
+
+        msg = KnockChatMessage()
+        msg.chat = knock_chat
+        msg.sender = request.user
+        msg.receiver = receiver
+        msg.text = text
+        msg.save()
+
+        return redirect(reverse('chat', args=[knock_pk, user_pk]))
+
+    try:
+        knock_chat = KnockChat.objects.get(knock=knock_pk, user=user_pk)
+    except KnockChat.DoesNotExist:
+        knock_chat = KnockChat()
+        knock_chat.knock = get_object_or_404(Knock, pk=knock_pk)
+        knock_chat.user = get_object_or_404(get_user_model(), pk=user_pk)
+        knock_chat.save()
+
+    if request.user.pk == knock_chat.knock.requester.pk:
+        receiver = knock_chat.user
+    elif request.user.pk == knock_chat.user.pk:
+        receiver = knock_chat.knock.requester
+    else:
+        raise PermissionDenied('User id errors on chat')
+
+    can_write = knock_chat.knock.requester.pk == request.user.pk and knock_chat.knock.work_stars is None \
+        or knock_chat.user.pk == request.user.pk and (
+            knock_chat.knock.assigned_to is None or knock_chat.knock.assigned_to.pk == request.user.pk
+        ) and knock_chat.knock.request_stars is None
+
+    ctx = {'chat': knock_chat, 'receiver': receiver, 'can_write': can_write}
+
+    return render(request, 'main/chat.html', context=ctx)

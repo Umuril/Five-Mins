@@ -1,4 +1,4 @@
-{% extends "empty.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 
@@ -34,7 +34,5 @@
 
 {# Assumes you set up the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
-
-<p><a href="{% url 'homepage' %}">Back to Homepage</a></p>
 
 {% endblock content %}

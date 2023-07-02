@@ -17,7 +17,7 @@ Including another URLconf
 """
 from django.urls import path
 
-from main import views
+from main import consumers, views
 
 urlpatterns = [
     path('', views.homepage, name='homepage'),
@@ -30,4 +30,9 @@ urlpatterns = [
     path('profile/', views.my_profile, name='my-profile'),
     path('profile/<int:user_pk>/', views.profile, name='profile'),
     path('search/', views.search, name='search'),
+    path('chat/<int:knock_pk>/with/<int:user_pk>/', views.chat, name='chat'),
+]
+
+ws_urlpatterns = [
+    path('ws/chat/<int:chat_pk>/', consumers.ChatRoomConsumer.as_asgi(), name='ws-chat'),
 ]

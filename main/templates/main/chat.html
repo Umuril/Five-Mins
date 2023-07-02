@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Welcome to the chat with {{ receiver }}!</h1>
+
+<div id="messages">
+    {% for message in chat.messages.all %}
+        <p>{{ message }}</p>
+    {% endfor %}
+</div>
+
+{% if can_write %}
+    <form id="chat_form" action="{% url 'chat' chat.knock.pk chat.user.pk %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="text" id="text">
+        <input type="submit" id="submit_msg" value="Send">
+    </form>
+{% endif %}
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/{{ chat.pk }}/');
+
+    chatSocket.onopen = function (e) {
+        console.log("Successfully connected to the WebSocket.");
+    };
+
+    document.querySelector('#chat_form').onsubmit = function (e) {
+        e.preventDefault();
+        const messageInputDom = document.querySelector('#text');
+        const message = messageInputDom.value;
+        const payload = JSON.stringify({'message': message,});
+        console.log("Sending: ", payload);
+        chatSocket.send(payload);
+        messageInputDom.value = '';
+    };
+
+    chatSocket.onmessage = function (e) {
+        console.log("Receive: ", e);
+        const div = document.querySelector('#messages');
+        const data = JSON.parse(e.data);
+        const message = data.message;
+        var p = document.createElement("p");
+        p.innerHTML = message;
+        div.appendChild(p);
+    };
+</script>
+{% endblock script %}

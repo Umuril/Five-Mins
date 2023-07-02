@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-vob#t1%hk!vxw4jm&z1s2@^tavt14@&lzuztj1dmur9momq#$f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,12 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
+
     # START - Third-party apps - START
     'djmoney',
     'debug_toolbar',
     'django_apscheduler',
+    'daphne',
     # END   - Third-party apps -   END
+
+    'django.contrib.staticfiles',
+
     'main.apps.MainConfig',
 ]
 
@@ -151,3 +155,12 @@ AUTHENTICATION_BACKENDS = [
 # https://stackoverflow.com/questions/15467831/django-logout-redirects-me-to-administration-page
 
 LOGOUT_REDIRECT_URL = 'homepage'
+
+# https://www.honeybadger.io/blog/django-channels-websockets-chat/
+
+ASGI_APPLICATION = 'knock_knock.asgi.application'
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}

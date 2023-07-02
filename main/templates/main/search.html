@@ -28,8 +28,8 @@
 {% if results %}
     <h5>Search results</h5>
     <ul>
-    {% for result in results %}
-        <li>{{ result }}</li>
+    {% for knock in results %}
+        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
     {% endfor %}
     </ul>
 {% endif %}

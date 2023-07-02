@@ -18,8 +18,8 @@ python3 manage.py createsuperuser --noinput
 python3 manage.py init
 python3 manage.py create_user -n 10
 python3 manage.py create_worker -n 11
-python3 manage.py create_knock -n 10
-python3 manage.py create_submit -n 10
+python3 manage.py create_knock -n 100
+python3 manage.py create_submit -n 50
 python3 manage.py reserve_knock -n 10
 python3 manage.py progress_knock --wip -n 10
 python3 manage.py progress_knock --done -n 10

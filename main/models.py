@@ -97,6 +97,28 @@ class KnockSubmit(models.Model):
     submit_time = models.DateTimeField(null=False, editable=False, auto_now_add=True)
 
 
+class KnockChat(models.Model):
+    class Status(models.TextChoices):
+        OPEN = 'O', 'Open'
+        CLOSED = 'C', 'Closed'
+
+    knock = models.ForeignKey(Knock, on_delete=models.CASCADE, related_name='chats')
+    user = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING, related_name='chats')
+    creation_time = models.DateTimeField(null=False, editable=False, auto_now_add=True)
+    status = models.CharField(max_length=1, choices=Status.choices, default=Status.OPEN)
+
+
+class KnockChatMessage(models.Model):
+    chat = models.ForeignKey(KnockChat, on_delete=models.CASCADE, related_name='messages')
+    timestamp = models.DateTimeField(null=False, editable=False, auto_now_add=True)
+    sender = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING, related_name='+')
+    receiver = models.ForeignKey(get_user_model(), on_delete=models.DO_NOTHING, related_name='+')
+    text = models.CharField(max_length=1024)
+
+    def __str__(self):
+        return f'{self.timestamp} - {self.sender} - {self.text}'
+
+
 @receiver(pre_save, sender=Knock)
 def both_have_rated(sender, instance, *args, **kwargs):
     # pylint: disable=unused-argument

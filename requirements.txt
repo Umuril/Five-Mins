@@ -1,4 +1,6 @@
 asgiref
+channels
+daphne
 django
 django-apscheduler
 django-debug-toolbar
