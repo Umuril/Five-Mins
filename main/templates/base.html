@@ -26,6 +26,7 @@
         <a href="{% url 'logout' %}?next={% url 'homepage' %}">Log out</a>
     {% else %}
         <a href="{% url 'login' %}?next={% url 'homepage' %}">Log in</a>
+        <a href="{% url 'register' %}?next={% url 'homepage' %}">Register</a>
     {% endif %}
 
     {% if user.is_staff %}

@@ -18,14 +18,14 @@ class UserAdmin(BaseUserAdmin):
         'email',
         'first_name',
         'last_name',
-        'submits_count',
+        # 'submits_count',
         'requests_count',
         'works_count',
     ]
     inlines = [ProfileInline]
 
-    def submits_count(self, obj):
-        return obj.submits.count()
+    # def submits_count(self, obj):
+    #     return obj.submits.count()
 
     def works_count(self, obj):
         return obj.works.count()

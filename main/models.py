@@ -2,10 +2,9 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import F, Q
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
 from django.urls import reverse
 from djmoney.models.fields import MoneyField
+from PIL import Image
 
 GENDER_CHOICES = [
     ('M', 'Male'),
@@ -17,6 +16,18 @@ GENDER_CHOICES = [
 class Profile(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, primary_key=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        img = Image.open(self.image.path)  # Open image
+
+        # resize image
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)  # Resize image
+            img.save(self.image.path)  # Save it again and override the larger image
 
 
 class Knock(models.Model):
@@ -117,13 +128,3 @@ class KnockChatMessage(models.Model):
 
     def __str__(self):
         return f'{self.timestamp} - {self.sender} - {self.text}'
-
-
-@receiver(pre_save, sender=Knock)
-def both_have_rated(sender, instance, *args, **kwargs):
-    # pylint: disable=unused-argument
-    if instance.status == Knock.Status.DONE and instance.request_stars and instance.work_stars:
-        instance.status = Knock.Status.CLOSED
-
-    if instance.status == Knock.Status.OPEN and instance.assigned_to:
-        instance.status = Knock.Status.RESERVED

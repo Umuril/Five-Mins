@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 
+from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -11,7 +12,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView
 
-from main.forms import KnockForm
+from main.forms import (KnockForm, ProfileUpdateForm, UserRegisterForm,
+                        UserUpdateForm)
 from main.models import Knock, KnockChat, KnockChatMessage, KnockSubmit
 
 
@@ -132,14 +134,53 @@ def my_profile(request):
     return redirect(reverse('profile', args=[request.user.pk]))
 
 
+def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            form.cleaned_data.get('username')
+            messages.success(request, 'Your account has been created! You are now able to log in')
+            return redirect('login', )
+    else:
+        form = UserRegisterForm()
+    return render(request, 'main/register.html', {'form': form})
+
+
 def profile(request, user_pk):
+    if request.method == 'POST':
+        if not request.user.is_authenticated or user_pk != request.user.pk:
+            raise PermissionDenied('Cannot change other user profile')
+
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, 'Your account has been updated!')
+            return redirect(reverse('profile', args=[request.user.pk]))
+
+    elif request.user.is_authenticated and user_pk == request.user.pk:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+    else:
+        u_form = None
+        p_form = None
+
     user_profile = get_object_or_404(get_user_model(), pk=user_pk)
     knocks = Knock.objects.filter(Q(requester=user_pk) | Q(assigned_to=user_pk)).select_related('requester').order_by('-update_time')
 
     request_rating = Knock.objects.filter(requester=user_pk).aggregate(Avg('request_stars'))['request_stars__avg']
     work_rating = Knock.objects.filter(assigned_to=user_pk).aggregate(Avg('work_stars'))['work_stars__avg']
 
-    ctx = {'user_profile': user_profile, 'knocks': knocks, 'request_rating': request_rating, 'work_rating': work_rating}
+    ctx = {
+        'user_profile': user_profile,
+        'knocks': knocks,
+        'request_rating': request_rating,
+        'work_rating': work_rating,
+        'u_form': u_form,
+        'p_form': p_form}
 
     return render(request, 'main/profile.html', context=ctx)
 

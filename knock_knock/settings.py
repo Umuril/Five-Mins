@@ -164,3 +164,12 @@ CHANNEL_LAYERS = {
         'BACKEND': 'channels.layers.InMemoryChannelLayer'
     }
 }
+
+# https://www.devhandbook.com/django/user-profile/
+
+MEDIA_ROOT = BASE_DIR / 'media'  # Directory where uploaded media is saved.
+MEDIA_URL = '/media/'  # Public URL at the browser
+
+# https://docs.djangoproject.com/en/4.2/ref/settings/#login-redirect-url
+
+LOGIN_REDIRECT_URL = '/'
