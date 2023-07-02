@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Avg, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
@@ -10,8 +13,6 @@ from django.views.generic import CreateView, DeleteView, DetailView
 
 from main.forms import KnockForm
 from main.models import Knock, KnockSubmit
-
-# Create your views here.
 
 
 def homepage(request):
@@ -141,3 +142,47 @@ def profile(request, user_pk):
     ctx = {'user_profile': user_profile, 'knocks': knocks, 'request_rating': request_rating, 'work_rating': work_rating}
 
     return render(request, 'main/profile.html', context=ctx)
+
+
+def search(request):
+
+    results = []
+    filters = []
+
+    title = request.GET.get('title', '')
+    if title.strip():
+        filters += [Q(title__icontains=title)]
+
+    date = request.GET.get('date', '')
+    if title is not None:
+        try:
+            date = datetime.date.fromisoformat(date)
+            filters += [Q(request_date=date)]
+        except ValueError:
+            pass
+
+    category = request.GET.get('category', '')
+    if category.strip():
+        filters += [Q(category__icontains=category)]
+
+    filter_acc = Q()
+    if len(filters) > 0:
+        for filt in filters:
+            filter_acc &= filt
+        results = Knock.objects.filter(filter_acc).all()
+
+    paginator = Paginator(results, 20)
+    page = request.GET.get('page')
+
+    try:
+        results = paginator.page(page)
+    except PageNotAnInteger:
+        results = paginator.page(1)
+    except EmptyPage:
+        results = paginator.page(paginator.num_pages)
+
+    url_params = f'title={title}&date={date}&category={category}'
+
+    ctx = {'results': results, 'url_params': url_params}
+
+    return render(request, 'main/search.html', context=ctx)

@@ -29,4 +29,5 @@ urlpatterns = [
     path('knock/<int:knock_pk>/rating/', views.rating, name='knock-rating'),
     path('profile/', views.my_profile, name='my-profile'),
     path('profile/<int:user_pk>/', views.profile, name='profile'),
+    path('search/', views.search, name='search'),
 ]
