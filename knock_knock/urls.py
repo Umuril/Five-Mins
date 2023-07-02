@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-URL configuration for five_mins project.
+URL configuration for knock_knock project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/

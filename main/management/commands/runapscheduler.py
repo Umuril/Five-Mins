@@ -11,7 +11,7 @@ from django_apscheduler import util
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 
-from main.models import Hand
+from main.models import Knock
 
 logger = logging.getLogger(__name__)
 
@@ -20,12 +20,12 @@ logger = logging.getLogger(__name__)
 def my_job():
     # Your job processing logic here...
     print('Running my_job')
-    update_one = Hand.objects.filter(status=Hand.Status.IN_PROGRESS, request_date__lt=datetime.today()).update(status=Hand.Status.DONE)
-    update_two = Hand.objects.filter(
-        status=Hand.Status.IN_PROGRESS,
+    update_one = Knock.objects.filter(status=Knock.Status.IN_PROGRESS, request_date__lt=datetime.today()).update(status=Knock.Status.DONE)
+    update_two = Knock.objects.filter(
+        status=Knock.Status.IN_PROGRESS,
         request_date=datetime.today(),
         request_end_time__lt=datetime.now()).update(
-        status=Hand.Status.DONE)
+        status=Knock.Status.DONE)
     print(f'Updated {update_one + update_two} rows')
 
 

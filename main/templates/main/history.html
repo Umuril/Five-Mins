@@ -4,8 +4,8 @@
 
 <h5>History</h5>
 <ul>
-    {% for hand in hands %}
-        <li style="list-style-type: {% if hand.status == 'I' %}'🔴 '{% endif %}{% if hand.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
+    {% for knock in knocks %}
+        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
     {% endfor %}
 </ul>
 

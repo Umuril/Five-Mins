@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-URL configuration for five_mins project.
+URL configuration for knock_knock project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/4.2/topics/http/urls/
@@ -21,23 +21,23 @@ from .views import main
 
 urlpatterns = [
     path('', main.homepage, name='homepage'),
-    path('hand/add/', main.HandCreateView.as_view(), name='hand-add'),
-    path('hand/<int:pk>/', main.HandDetailView.as_view(), name='hand-detail'),
+    path('knock/add/', main.KnockCreateView.as_view(), name='knock-add'),
+    path('knock/<int:pk>/', main.KnockDetailView.as_view(), name='knock-detail'),
     path(
-        'hand/<int:pk>/delete/',
-        main.HandDeleteView.as_view(),
-        name='hand-delete'),
+        'knock/<int:pk>/delete/',
+        main.KnockDeleteView.as_view(),
+        name='knock-delete'),
     path(
-        'hand/<int:hand_pk>/submit/',
+        'knock/<int:knock_pk>/submit/',
         main.submit,
-        name='hand-submit'),
+        name='knock-submit'),
     path(
-        'hand/<int:hand_pk>/assign_to/<int:user_pk>/',
+        'knock/<int:knock_pk>/assign_to/<int:user_pk>/',
         main.assing_to,
-        name='hand-assign_to'),
+        name='knock-assign_to'),
     path(
-        'hand/<int:hand_pk>/rating/',
+        'knock/<int:knock_pk>/rating/',
         main.rating,
-        name='hand-rating'),
+        name='knock-rating'),
     path('history', main.history, name='history'),
 ]

@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
-from main.models import Hand
+from main.models import Knock
 
 
 class Command(BaseCommand):
@@ -18,10 +18,10 @@ class Command(BaseCommand):
         workers, _ = Group.objects.get_or_create(name='Workers')
         print('Workers group created')
 
-        content_type = ContentType.objects.get_for_model(Hand)
+        content_type = ContentType.objects.get_for_model(Knock)
         permission = Permission.objects.create(
-            codename='can_submit_for_hands',
-            name='Can submit for Hands',
+            codename='can_submit_for_knocks',
+            name='Can submit for Knock Knocks',
             content_type=content_type)  # creating permissions
         workers.permissions.add(permission)
         print('Permissions for group Workers created')

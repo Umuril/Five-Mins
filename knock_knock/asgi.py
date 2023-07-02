@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-ASGI config for five_mins project.
+ASGI config for knock_knock project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -12,6 +12,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'five_mins.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'knock_knock.settings')
 
 application = get_asgi_application()

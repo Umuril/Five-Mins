@@ -2,7 +2,7 @@
 
 {% block content %}
 
-    <form action="{% url 'hand-add' %}" method="post">
+    <form action="{% url 'knock-add' %}" method="post">
         {% csrf_token %}
         {{ form }}
         <input type="submit" value="Submit">

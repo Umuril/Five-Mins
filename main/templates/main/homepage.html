@@ -9,15 +9,15 @@
 {% block content %}
 
 {% if user.is_authenticated %}
-    <h1 class="title"><a href="{% url 'hand-add' %}">🙌 New 🙌</a></h1>
+    <h1 class="title"><a href="{% url 'knock-add' %}">🙌 New 🙌</a></h1>
     <hr>
 {% endif %}
 
-{% if my_hands %}
-<h5>My Hands</h5>
+{% if my_knocks %}
+<h5>My Knock Knocks</h5>
 <ul>
-    {% for hand in my_hands %}
-        <li style="list-style-type: {% if hand.status == 'I' %}'🔴 '{% endif %}{% if hand.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
+    {% for knock in my_knocks %}
+        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
     {% endfor %}
 </ul>
 
@@ -27,18 +27,18 @@
 {% if my_submits %}
 <h5>My submits</h5>
 <ul>
-    {% for hand in my_submits %}
-        <li style="list-style-type: {% if hand.status == 'I' %}'🔴 '{% endif %}{% if hand.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
+    {% for knock in my_submits %}
+        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
     {% endfor %}
 </ul>
 
 <hr>
 {% endif %}
 
-<h5>List of Hands</h5>
+<h5>List of Knock Knocks</h5>
 <ul>
-    {% for hand in last_updated_hands %}
-        <li style="list-style-type: {% if hand.status == 'I' %}'🔴 '{% endif %}{% if hand.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'hand-detail' hand.pk %}">{{ hand }}</a></li>
+    {% for knock in last_updated_knocks %}
+        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
     {% endfor %}
 </ul>
 

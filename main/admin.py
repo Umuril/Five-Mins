@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
-from main.models import Hand, Profile
+from main.models import Knock, Profile
 
 
 class ProfileInline(admin.StackedInline):
@@ -38,8 +38,8 @@ admin.site.unregister(get_user_model())
 admin.site.register(get_user_model(), UserAdmin)
 
 
-@admin.register(Hand)
-class HandAdmin(admin.ModelAdmin):
+@admin.register(Knock)
+class KnockAdmin(admin.ModelAdmin):
     list_display = [
         'title',
         'requester',

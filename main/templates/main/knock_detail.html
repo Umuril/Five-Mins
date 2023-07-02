@@ -19,22 +19,22 @@
 
 {% if user.pk == object.requester.pk %}
     <br>
-    {% comment %} <br><a href="{% url 'hand-update' object.pk %}">Edit</a> {% endcomment %}
+    {% comment %} <br><a href="{% url 'knock-update' object.pk %}">Edit</a> {% endcomment %}
     {% if object.status == 'O' or object.status == 'R' %}
-        <br><a href="{% url 'hand-delete' object.pk %}">Delete</a>
+        <br><a href="{% url 'knock-delete' object.pk %}">Delete</a>
     {% endif %}
 {% endif %}
 
-{% if user.pk != object.requester.pk and user not in object.submits.all and not object.assigned_to and perms.main.can_submit_for_hands %}
+{% if user.pk != object.requester.pk and user not in object.submits.all and not object.assigned_to and perms.main.can_submit_for_knocks %}
     <br>
-    <br><a href="{% url 'hand-submit' object.pk %}">Submit</a>
+    <br><a href="{% url 'knock-submit' object.pk %}">Submit</a>
 {% endif %}
 
 {% if object.status == 'D' %}
     {% if user.pk == object.requester.pk and not object.work_stars or user.pk == object.assigned_to.pk and not object.request_stars %}
         <br>
         <br>
-        <form action="{% url 'hand-rating' object.pk %}" method="post">
+        <form action="{% url 'knock-rating' object.pk %}" method="post">
             {% csrf_token %}
             <label class="rating-label">
                 <p><strong>Rate for {{ object.assigned_to }}</strong></p>
@@ -51,12 +51,12 @@
     {% endif %}
 {% endif %}
 
-{% if not object.assigned_to and object.handsubmit_set.count > 0 %}
+{% if not object.assigned_to and object.knocksubmit_set.count > 0 %}
     <br/>
     <br/>List of user submits:
     <ul>
-        {% for hand_submit in object.handsubmit_set.all|dictsort:"submit_time" %}
-            <li><a href="{% url 'hand-assign_to' hand.pk hand_submit.user.pk %}">{{ hand_submit.user }} - {{ hand_submit.user.first_name }} {{ hand_submit.user.last_name }} submitted on <span title="{{ hand_submit.submit_time|date:"c" }}">{{ hand_submit.submit_time }}</span></a></li>
+        {% for knock_submit in object.knocksubmit_set.all|dictsort:"submit_time" %}
+            <li><a href="{% url 'knock-assign_to' knock.pk knock_submit.user.pk %}">{{ knock_submit.user }} - {{ knock_submit.user.first_name }} {{ knock_submit.user.last_name }} submitted on <span title="{{ knock_submit.submit_time|date:"c" }}">{{ knock_submit.submit_time }}</span></a></li>
         {% endfor %}
     </ul>
 {% endif %}

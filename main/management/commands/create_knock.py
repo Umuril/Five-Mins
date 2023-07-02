@@ -4,21 +4,21 @@ from django.core.management.base import BaseCommand
 from djmoney.money import Money
 from faker import Faker
 
-from main.models import Hand
+from main.models import Knock
 
 
-def create_open_hand(faker):
+def create_open_knock(faker):
     requester = get_user_model().objects.filter(groups__name='Test Users').order_by('?').first()
 
-    hand = Hand()
+    knock = Knock()
 
     job = faker.job()
     while len(job) > 50:
         job = faker.job()
-    hand.title = job
-    hand.description = faker.paragraph()
-    # hand.request_location = faker.address()
-    hand.request_price = Money(
+    knock.title = job
+    knock.description = faker.paragraph()
+    # knock.request_location = faker.address()
+    knock.request_price = Money(
         faker.pyfloat(
             left_digits=faker.pyint(
                 min_value=1,
@@ -29,8 +29,8 @@ def create_open_hand(faker):
             positive=True),
         'EUR')
 
-    hand.requester = requester
-    hand.request_date = faker.future_date()
+    knock.requester = requester
+    knock.request_date = faker.future_date()
 
     time_one = faker.time_object().replace(second=0, microsecond=0)
     time_two = faker.time_object().replace(second=0, microsecond=0)
@@ -38,17 +38,17 @@ def create_open_hand(faker):
     while time_one == time_two:
         time_two = faker.time_object().replace(second=0, microsecond=0)
 
-    hand.request_start_time = min(time_one, time_two)
-    hand.request_end_time = max(time_one, time_two)
+    knock.request_start_time = min(time_one, time_two)
+    knock.request_end_time = max(time_one, time_two)
 
-    return hand
+    return knock
 
 
 class Command(BaseCommand):
-    help = 'Create a fake Hand'
+    help = 'Create a fake Knock Knock'
 
     def add_arguments(self, parser):
-        parser.add_argument('-n', '--num', type=int, help='Create multiple Hands')
+        parser.add_argument('-n', '--num', type=int, help='Create multiple Knock Knocks')
 
     def handle(self, *args, **kwargs):
         count = kwargs['num'] if kwargs['num'] else 1
@@ -56,8 +56,8 @@ class Command(BaseCommand):
         faker = Faker(['it_IT'])  # https://faker.readthedocs.io/en/master/providers.html
 
         for idx in range(count):
-            hand = create_open_hand(faker)
+            knock = create_open_knock(faker)
 
-            hand.save()
+            knock.save()
 
-            print(f'[{idx + 1}] Hand {hand} created ')
+            print(f'[{idx + 1}] Knock Knock {knock} created ')

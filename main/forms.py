@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from django import forms
 
-from .models import Hand
+from .models import Knock
 
 
-class HandForm(forms.ModelForm):
+class KnockForm(forms.ModelForm):
     class Meta:
-        model = Hand
+        model = Knock
         fields = (
             'title',
             'description',

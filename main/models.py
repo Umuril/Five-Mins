@@ -19,7 +19,7 @@ class Profile(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
 
 
-class Hand(models.Model):
+class Knock(models.Model):
     class Status(models.TextChoices):
         OPEN = 'O', 'Open'
         RESERVED = 'R', 'Reserved'
@@ -62,15 +62,16 @@ class Hand(models.Model):
 
     update_time = models.DateTimeField(null=False, editable=False, auto_now=True)
 
-    submits = models.ManyToManyField(get_user_model(), through='HandSubmit')
+    submits = models.ManyToManyField(get_user_model(), through='KnockSubmit')
 
     def __str__(self):
-        desc_str = f"'{self.title}' requested by {self.requester.username}"
+        desc_str = f"'{self.title}' requested by {self.requester}"
         time_str = f'from {self.request_start_time} to {self.request_end_time}'
-        return f'{desc_str} for day {self.request_date} {time_str} paying {self.request_price}'
+        price_str = f'paying {self.request_price}' if self.request_price else ''
+        return f'{desc_str} for day {self.request_date} {time_str} {price_str}'
 
     def get_absolute_url(self):
-        return reverse('hand-detail', kwargs={'pk': self.pk})
+        return reverse('knock-detail', kwargs={'pk': self.pk})
 
     class Meta:
         constraints = [
@@ -81,17 +82,17 @@ class Hand(models.Model):
             )]
 
 
-class HandSubmit(models.Model):
-    hand = models.ForeignKey(Hand, on_delete=models.CASCADE)
+class KnockSubmit(models.Model):
+    knock = models.ForeignKey(Knock, on_delete=models.CASCADE)
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     submit_time = models.DateTimeField(null=False, editable=False, auto_now_add=True)
 
 
-@receiver(pre_save, sender=Hand)
+@receiver(pre_save, sender=Knock)
 def both_have_rated(sender, instance, *args, **kwargs):
     # pylint: disable=unused-argument
-    if instance.status == Hand.Status.DONE and instance.request_stars and instance.work_stars:
-        instance.status = Hand.Status.CLOSED
+    if instance.status == Knock.Status.DONE and instance.request_stars and instance.work_stars:
+        instance.status = Knock.Status.CLOSED
 
-    if instance.status == Hand.Status.OPEN and instance.assigned_to:
-        instance.status = Hand.Status.RESERVED
+    if instance.status == Knock.Status.OPEN and instance.assigned_to:
+        instance.status = Knock.Status.RESERVED
