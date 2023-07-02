@@ -20,6 +20,8 @@ class Profile(models.Model):
 
 
 class Knock(models.Model):
+    # pylint: disable=too-many-instance-attributes
+
     class Status(models.TextChoices):
         OPEN = 'O', 'Open'
         RESERVED = 'R', 'Reserved'
@@ -34,8 +36,14 @@ class Knock(models.Model):
         BELOW_AVERAGE = 2, 'Below average'
         POOR = 1, 'Poor'
 
+    class Category(models.TextChoices):
+        BUY = 'Buy', 'Buy'
+        DO = 'Do', 'Do'
+        MEET = 'Meet', 'Meet'
+
     title = models.CharField(max_length=50)
     description = models.CharField(null=True, blank=True, max_length=255)
+    category = models.CharField(max_length=20, choices=Category.choices)
 
     requester = models.ForeignKey(get_user_model(), on_delete=models.PROTECT, related_name='requests')
     status = models.CharField(max_length=1, choices=Status.choices, default=Status.OPEN)
@@ -65,7 +73,8 @@ class Knock(models.Model):
     submits = models.ManyToManyField(get_user_model(), through='KnockSubmit')
 
     def __str__(self):
-        desc_str = f"'{self.title}' requested by {self.requester}"
+        desc_str = f'[{self.category.upper()}] ' if self.category else ''
+        desc_str += f"'{self.title}' requested by {self.requester}"
         time_str = f'from {self.request_start_time} to {self.request_end_time}'
         price_str = f'paying {self.request_price}' if self.request_price else ''
         return f'{desc_str} for day {self.request_date} {time_str} {price_str}'

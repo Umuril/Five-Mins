@@ -17,6 +17,8 @@ def create_open_knock(faker):
         job = faker.job()
     knock.title = job
     knock.description = faker.paragraph()
+    knock.category = faker.enum(Knock.Category)
+
     # knock.request_location = faker.address()
     knock.request_price = Money(
         faker.pyfloat(

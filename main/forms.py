@@ -10,6 +10,7 @@ class KnockForm(forms.ModelForm):
         fields = (
             'title',
             'description',
+            'category',
             'request_date',
             'request_start_time',
             'request_end_time',
