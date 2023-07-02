@@ -17,27 +17,27 @@ Including another URLconf
 """
 from django.urls import path
 
-from .views import main
+from main import views
 
 urlpatterns = [
-    path('', main.homepage, name='homepage'),
-    path('knock/add/', main.KnockCreateView.as_view(), name='knock-add'),
-    path('knock/<int:pk>/', main.KnockDetailView.as_view(), name='knock-detail'),
+    path('', views.homepage, name='homepage'),
+    path('knock/add/', views.KnockCreateView.as_view(), name='knock-add'),
+    path('knock/<int:pk>/', views.KnockDetailView.as_view(), name='knock-detail'),
     path(
         'knock/<int:pk>/delete/',
-        main.KnockDeleteView.as_view(),
+        views.KnockDeleteView.as_view(),
         name='knock-delete'),
     path(
         'knock/<int:knock_pk>/submit/',
-        main.submit,
+        views.submit,
         name='knock-submit'),
     path(
         'knock/<int:knock_pk>/assign_to/<int:user_pk>/',
-        main.assing_to,
+        views.assing_to,
         name='knock-assign_to'),
     path(
         'knock/<int:knock_pk>/rating/',
-        main.rating,
+        views.rating,
         name='knock-rating'),
-    path('history', main.history, name='history'),
+    path('history', views.history, name='history'),
 ]
