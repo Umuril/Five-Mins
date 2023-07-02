@@ -7,13 +7,13 @@
 <br/><h5>Status: {{ object.get_status_display }}</h5>
 
 {% if object.assigned_to %}
-    <br/>Assigned to: {{ object.assigned_to }}
+    <br/>Assigned to: <a href="{% url 'profile' object.assigned_to.pk %}">{{ object.assigned_to }}</a>
 
     {% if object.work_stars %}
-        <br/>User {{ object.requester }} rated Worker {{ object.assigned_to }}: {{ object.get_work_stars_display }}
+        <br/>User <a href="{% url 'profile' object.requester.pk %}">{{ object.requester }}</a> rated Worker <a href="{% url 'profile' object.assigned_to.pk %}">{{ object.assigned_to }}</a>: {{ object.get_work_stars_display }}
     {% endif %}
     {% if object.request_stars %}
-        <br/>Worker {{ object.assigned_to }} rated User {{ object.requester }}: {{ object.get_request_stars_display }}
+        <br/>Worker <a href="{% url 'profile' object.assigned_to.pk %}">{{ object.assigned_to }}</a> rated User <a href="{% url 'profile' object.requester.pk %}">{{ object.requester }}</a>: {{ object.get_request_stars_display }}
     {% endif %}
 {% endif %}
 
@@ -56,7 +56,11 @@
     <br/>List of user submits:
     <ul>
         {% for knock_submit in object.knocksubmit_set.all|dictsort:"submit_time" %}
-            <li><a href="{% url 'knock-assign_to' knock.pk knock_submit.user.pk %}">{{ knock_submit.user }} - {{ knock_submit.user.first_name }} {{ knock_submit.user.last_name }} submitted on <span title="{{ knock_submit.submit_time|date:"c" }}">{{ knock_submit.submit_time }}</span></a></li>
+            {% if user.pk == knock.requester.pk %}
+                <li><a href="{% url 'knock-assign_to' knock.pk knock_submit.user.pk %}">{{ knock_submit.user }} - {{ knock_submit.user.first_name }} {{ knock_submit.user.last_name }} submitted on <span title="{{ knock_submit.submit_time|date:"c" }}">{{ knock_submit.submit_time }}</span></a></li>
+            {% else %}
+                <li><a href="{% url 'profile' knock_submit.user.pk %}">{{ knock_submit.user }} - {{ knock_submit.user.first_name }} {{ knock_submit.user.last_name }}</a> submitted on <span title="{{ knock_submit.submit_time|date:"c" }}">{{ knock_submit.submit_time }}</span></li>
+            {% endif %}
         {% endfor %}
     </ul>
 {% endif %}

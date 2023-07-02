@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Avg, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DeleteView, DetailView
@@ -53,14 +53,6 @@ class KnockDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 class KnockDetailView(DetailView):
     model = Knock
     form_class = KnockForm
-
-
-@login_required
-def history(request):
-    knocks = Knock.objects.filter(status=Knock.Status.CLOSED).filter(Q(requester=request.user.pk) | Q(
-        assigned_to=request.user.pk)).select_related('requester').order_by('-update_time')
-
-    return render(request, 'main/history.html', context={'knocks': knocks})
 
 
 @login_required
@@ -132,3 +124,20 @@ def rating(request, knock_pk):
         raise PermissionDenied('Only requester and assigned can rate this Knock Knock')
 
     return redirect(reverse('knock-detail', args=[knock_pk]))
+
+
+@login_required
+def my_profile(request):
+    return redirect(reverse('profile', args=[request.user.pk]))
+
+
+def profile(request, user_pk):
+    user_profile = get_object_or_404(get_user_model(), pk=user_pk)
+    knocks = Knock.objects.filter(Q(requester=user_pk) | Q(assigned_to=user_pk)).select_related('requester').order_by('-update_time')
+
+    request_rating = Knock.objects.filter(requester=user_pk).aggregate(Avg('request_stars'))['request_stars__avg']
+    work_rating = Knock.objects.filter(assigned_to=user_pk).aggregate(Avg('work_stars'))['work_stars__avg']
+
+    ctx = {'user_profile': user_profile, 'knocks': knocks, 'request_rating': request_rating, 'work_rating': work_rating}
+
+    return render(request, 'main/profile.html', context=ctx)

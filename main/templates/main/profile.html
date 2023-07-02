@@ -2,7 +2,11 @@
 
 {% block content %}
 
-<h5>History</h5>
+<h3>{{ user_profile.first_name }} {{ user_profile.last_name }}</h3>
+<br/>Request rating: {{ request_rating }}
+<br/>Work rating: {{ work_rating }}
+<br/>
+<br/>History:
 <ul>
     {% for knock in knocks %}
         <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>

@@ -23,21 +23,10 @@ urlpatterns = [
     path('', views.homepage, name='homepage'),
     path('knock/add/', views.KnockCreateView.as_view(), name='knock-add'),
     path('knock/<int:pk>/', views.KnockDetailView.as_view(), name='knock-detail'),
-    path(
-        'knock/<int:pk>/delete/',
-        views.KnockDeleteView.as_view(),
-        name='knock-delete'),
-    path(
-        'knock/<int:knock_pk>/submit/',
-        views.submit,
-        name='knock-submit'),
-    path(
-        'knock/<int:knock_pk>/assign_to/<int:user_pk>/',
-        views.assing_to,
-        name='knock-assign_to'),
-    path(
-        'knock/<int:knock_pk>/rating/',
-        views.rating,
-        name='knock-rating'),
-    path('history', views.history, name='history'),
+    path('knock/<int:pk>/delete/', views.KnockDeleteView.as_view(), name='knock-delete'),
+    path('knock/<int:knock_pk>/submit/', views.submit, name='knock-submit'),
+    path('knock/<int:knock_pk>/assign_to/<int:user_pk>/', views.assing_to, name='knock-assign_to'),
+    path('knock/<int:knock_pk>/rating/', views.rating, name='knock-rating'),
+    path('profile/', views.my_profile, name='my-profile'),
+    path('profile/<int:user_pk>/', views.profile, name='profile'),
 ]
