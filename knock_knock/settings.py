@@ -40,7 +40,7 @@ INSTALLED_APPS = [
 
     # START - Third-party apps - START
     'djmoney',
-    'debug_toolbar',
+    # 'debug_toolbar',
     'django_apscheduler',
     'daphne',
     # END   - Third-party apps -   END
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Third-party apps
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'knock_knock.urls'
@@ -152,9 +152,13 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+# https://docs.djangoproject.com/en/4.2/ref/settings/#login-redirect-url
+
+LOGIN_REDIRECT_URL = '/'
+
 # https://stackoverflow.com/questions/15467831/django-logout-redirects-me-to-administration-page
 
-LOGOUT_REDIRECT_URL = 'homepage'
+LOGOUT_REDIRECT_URL = '/'
 
 # https://www.honeybadger.io/blog/django-channels-websockets-chat/
 
@@ -169,7 +173,3 @@ CHANNEL_LAYERS = {
 
 MEDIA_ROOT = BASE_DIR / 'media'  # Directory where uploaded media is saved.
 MEDIA_URL = '/media/'  # Public URL at the browser
-
-# https://docs.djangoproject.com/en/4.2/ref/settings/#login-redirect-url
-
-LOGIN_REDIRECT_URL = '/'
