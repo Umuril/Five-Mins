@@ -29,7 +29,17 @@ def homepage(request):
 
         my_submits = Knock.objects.filter(submits=request.user.pk, status=Knock.Status.OPEN).select_related('requester')
 
-    last_updated_knocks = Knock.objects.exclude().select_related('requester').order_by('-update_time')[:20]
+    last_updated_knocks = Knock.objects.exclude().select_related('requester').order_by('-update_time')
+
+    paginator = Paginator(last_updated_knocks, 20)
+    page = request.GET.get('page')
+
+    try:
+        last_updated_knocks = paginator.page(page)
+    except PageNotAnInteger:
+        last_updated_knocks = paginator.page(1)
+    except EmptyPage:
+        last_updated_knocks = paginator.page(paginator.num_pages)
 
     ctx = {'last_updated_knocks': last_updated_knocks, 'my_knocks': my_knocks, 'my_submits': my_submits}
 

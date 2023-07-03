@@ -38,21 +38,17 @@
     {% if results.has_previous %}
         <a href="?page={{ results.previous_page_number }}&{{ url_params }}">PREVIOUS</a>
     {% else %}
-        <a href="#!">PREVIOUS</a>
+        PREVIOUS
     {% endif %}
 
     {% for num in results.paginator.page_range %}
-        {% if results.number == num %}
-            <a href="#!">{{ num }}</a>
-        {% else %}
-            <a href="?page={{ num }}&{{ url_params }}">{{ num }}</a>
-        {% endif %}
+        <a href="?page={{ num }}&{{ url_params }}">{{ num }}</a>
     {% endfor %}
 
     {% if results.has_next %}
         <a href="?page={{ results.next_page_number }}&{{ url_params }}">NEXT</a>
     {% else %}
-        <a href="#!">NEXT</a>
+        NEXT
     {% endif %}
 {% endif %}
 
