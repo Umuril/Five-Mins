@@ -118,6 +118,9 @@ class KnockChat(models.Model):
     creation_time = models.DateTimeField(null=False, editable=False, auto_now_add=True)
     status = models.CharField(max_length=1, choices=Status.choices, default=Status.OPEN)
 
+    def __str__(self):
+        return f'Chat with {self.user}'
+
 
 class KnockChatMessage(models.Model):
     chat = models.ForeignKey(KnockChat, on_delete=models.CASCADE, related_name='messages')
