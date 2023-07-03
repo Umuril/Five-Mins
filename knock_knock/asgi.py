@@ -15,7 +15,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 
-from main import urls
+from knock import urls
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'knock_knock.settings')
 

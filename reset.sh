@@ -5,7 +5,7 @@ rm -f db.sqlite3
 ##### CLEAN UP PHASE #####
 
 ##### DJANGO PHASE #####
-python3 manage.py makemigrations main
+python3 manage.py makemigrations knock
 python3 manage.py makemigrations
 python3 manage.py migrate
 DJANGO_SUPERUSER_USERNAME=root \
@@ -28,5 +28,5 @@ python3 manage.py runapscheduler
 ##### CUSTOM PHASE #####
 
 ##### CLEAN UP PHASE #####
-rm -fr main/migrations/0*.py
+rm -fr knock/migrations/0*.py
 ##### CLEAN UP PHASE #####

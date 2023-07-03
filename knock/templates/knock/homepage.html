@@ -1,0 +1,65 @@
+{% extends "knock/base.html" %}
+
+{% block page-css %}
+.title {
+    text-align: center;
+}
+{% endblock page-css %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+    <h1 class="title"><a href="{% url 'knock-add' %}">🙌 New 🙌</a></h1>
+    <hr>
+{% endif %}
+
+{% if my_knocks %}
+<h5>My Knock Knocks</h5>
+<ul>
+    {% for knock in my_knocks %}
+        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
+    {% endfor %}
+</ul>
+
+<hr>
+{% endif %}
+
+{% if my_submits %}
+<h5>My submits</h5>
+<ul>
+    {% for knock in my_submits %}
+        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
+    {% endfor %}
+</ul>
+
+<hr>
+{% endif %}
+
+<h5>List of Knock Knocks</h5>
+<ul>
+    {% for knock in last_updated_knocks %}
+        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
+    {% endfor %}
+</ul>
+
+{% if last_updated_knocks.has_other_pages %}
+    {% if last_updated_knocks.has_previous %}
+        <a href="?page={{ last_updated_knocks.previous_page_number }}">PREVIOUS</a>
+    {% else %}
+        PREVIOUS
+    {% endif %}
+
+    {% for num in last_updated_knocks.paginator.page_range %}
+        <a href="?page={{ num }}">{{ num }}</a>
+    {% endfor %}
+
+    {% if last_updated_knocks.has_next %}
+        <a href="?page={{ last_updated_knocks.next_page_number }}">NEXT</a>
+    {% else %}
+        NEXT
+    {% endif %}
+{% endif %}
+
+<hr>
+
+{% endblock content %}

@@ -1,0 +1,46 @@
+{% extends "knock/base.html" %}
+
+{% block page-css %}
+    .rounded-circle {
+        border-radius: 100%;
+    }
+    .account-img {
+        height: 100px;
+        width: 100px;
+    }
+{% endblock page-css %}
+
+{% block content %}
+
+<h3>{{ user_profile.first_name }} {{ user_profile.last_name }}</h3>
+<img height="100px" width="100px" alt="image-profile" class="rounded-circle account-img" src="{{ user_profile.profile.image.url }}" />
+<br/>
+<br/>Request rating: {{ request_rating |floatformat:2 |default:" - " }}
+{% if perms.knock.can_submit_for_knocks %}
+    <br/>Work rating: {{ work_rating |floatformat:2 |default:" - " }}
+{% endif %}
+<br/>
+<br/>History:
+<ul>
+    {% for knock in knocks %}
+        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
+    {% endfor %}
+</ul>
+
+{% if u_form and p_form %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Profile Info</legend>
+            {{ u_form.as_p }}
+            <!-- User form -->
+            {{ p_form.as_p }}
+            <!-- Profile form -->
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Update</button>
+            </div>
+        </fieldset>
+    </form>
+{% endif %}
+
+{% endblock content %}
