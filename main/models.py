@@ -15,19 +15,28 @@ GENDER_CHOICES = [
 # https://docs.djangoproject.com/en/4.2/topics/auth/customizing/#extending-user
 class Profile(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, primary_key=True)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    gender = models.CharField(null=True, blank=True, max_length=1, choices=GENDER_CHOICES)
     image = models.ImageField(default='default.jpg', upload_to='profile_pics')
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
+        if self.image.name in ['default.jpg', 'male.jpg', 'female.jpg']:
+            if self.gender is None and self.image.name != 'default.jpg':
+                self.image.name = 'default.jpg'
+            elif self.gender == 'M' and self.image.name != 'male.jpg':
+                self.image.name = 'male.jpg'
+            elif self.gender == 'F' and self.image.name != 'female.jpg':
+                self.image.name = 'female.jpg'
+            super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
 
-        img = Image.open(self.image.path)  # Open image
+            img = Image.open(self.image.path)  # Open image
 
-        # resize image
-        if img.height > 300 or img.width > 300:
-            output_size = (300, 300)
-            img.thumbnail(output_size)  # Resize image
-            img.save(self.image.path)  # Save it again and override the larger image
+            # resize image
+            if img.height > 300 or img.width > 300:
+                output_size = (300, 300)
+                img.thumbnail(output_size)  # Resize image
+                img.save(self.image.path)  # Save it again and override the larger image
 
 
 class Knock(models.Model):
