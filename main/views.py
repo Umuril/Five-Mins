@@ -4,7 +4,7 @@ import datetime
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Avg, Q
@@ -45,17 +45,20 @@ class KnockCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class KnockDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+class KnockDeleteView(LoginRequiredMixin, DeleteView):
     model = Knock
     success_url = reverse_lazy('homepage')
 
-    def test_func(self):
-        return self.get_object().requester.pk == self.request.user.pk and self.get_object().status in [Knock.Status.OPEN, Knock.Status.RESERVED]
+    def get_queryset(self):
+        return super().get_queryset().filter(requester=self.request.user, status__in=[Knock.Status.OPEN, Knock.Status.RESERVED])
 
 
 class KnockDetailView(DetailView):
     model = Knock
     form_class = KnockForm
+
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related('knocksubmit_set__user')
 
 
 @login_required
@@ -164,11 +167,12 @@ def profile(request, user_pk):
     elif request.user.is_authenticated and user_pk == request.user.pk:
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
+        user_profile = request.user
     else:
         u_form = None
         p_form = None
+        user_profile = get_object_or_404(get_user_model(), pk=user_pk)
 
-    user_profile = get_object_or_404(get_user_model(), pk=user_pk)
     knocks = Knock.objects.filter(Q(requester=user_pk) | Q(assigned_to=user_pk)).select_related('requester').order_by('-update_time')
 
     request_rating = Knock.objects.filter(requester=user_pk).aggregate(Avg('request_stars'))['request_stars__avg']
@@ -180,7 +184,8 @@ def profile(request, user_pk):
         'request_rating': request_rating,
         'work_rating': work_rating,
         'u_form': u_form,
-        'p_form': p_form}
+        'p_form': p_form
+    }
 
     return render(request, 'main/profile.html', context=ctx)
 
@@ -210,7 +215,7 @@ def search(request):
     if len(filters) > 0:
         for filt in filters:
             filter_acc &= filt
-        results = Knock.objects.filter(filter_acc).all()
+        results = Knock.objects.filter(filter_acc).select_related('requester').all()
 
     paginator = Paginator(results, 20)
     page = request.GET.get('page')
@@ -254,16 +259,18 @@ def chat(request, knock_pk, user_pk):
         return redirect(reverse('chat', args=[knock_pk, user_pk]))
 
     try:
-        knock_chat = KnockChat.objects.get(knock=knock_pk, user=user_pk)
+        knock_chat = KnockChat.objects.select_related(
+            'user', 'knock__requester').prefetch_related('messages__sender').get(
+            knock=knock_pk, user=user_pk)
     except KnockChat.DoesNotExist:
         knock_chat = KnockChat()
         knock_chat.knock = get_object_or_404(Knock, pk=knock_pk)
         knock_chat.user = get_object_or_404(get_user_model(), pk=user_pk)
         knock_chat.save()
 
-    if request.user.pk == knock_chat.knock.requester.pk:
+    if request.user == knock_chat.knock.requester:
         receiver = knock_chat.user
-    elif request.user.pk == knock_chat.user.pk:
+    elif request.user == knock_chat.user:
         receiver = knock_chat.knock.requester
     else:
         raise PermissionDenied('User id errors on chat')
