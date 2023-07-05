@@ -2,10 +2,34 @@
 
 {% block content %}
 
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit">
-</form>
+    <div class="row">
+        {% if form.errors %}<p>Your username and password didn't match. Please try again.</p>{% endif %}
+    </div>
+
+    <div class="center row">
+        <div class="col s1"></div>
+        <form action="{% url 'knock-add' %}" method="post" class="col s10">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input class="btn" type="submit" value="Submit">
+        </form>
+    </div>
 
 {% endblock content %}
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            M.Datepicker.init(document.querySelectorAll('.datepicker'), {
+                'showClearBtn': true,
+                'format': 'yyyy-mm-dd',
+                'autoClose': true,
+                'firstDay': 1,
+            });
+            M.FormSelect.init(document.querySelectorAll('select'), {});
+            M.Timepicker.init(document.querySelectorAll('.timepicker'), {
+                'twelveHour': false,
+            });
+        });
+    </script>
+{% endblock script %}

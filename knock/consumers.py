@@ -52,8 +52,8 @@ class ChatRoomConsumer(JsonWebsocketConsumer):
             self.group_name,
             {
                 'type': 'chatbox_message',
-                'message': f'{ msg }',
-                'username': self.scope['user'].username,
+                'message': f'{ msg.text }',
+                'sender': f'{ msg.sender }',
             },
         )
 
@@ -61,6 +61,6 @@ class ChatRoomConsumer(JsonWebsocketConsumer):
         self.send_json(
             {
                 'message': event['message'],
-                'username': self.scope['user'].username,
+                'sender': event['sender'],
             }
         )

@@ -1,0 +1,18 @@
+{% extends "knock//base.html" %}
+
+{% block content %}
+
+    <div class="content-section">
+        <!-- Sign up form -->
+        <div class="center row">
+            <form method="post" class="col s12">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="center form-group">
+                    <button class="btn btn-outline-info" type="submit">Sign up</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock content %}

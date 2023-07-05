@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import F, Q
+from django.db.models import Avg, F, Q
 from django.urls import reverse
 from djmoney.models.fields import MoneyField
 from PIL import Image
@@ -17,6 +17,13 @@ class Profile(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, primary_key=True)
     gender = models.CharField(null=True, blank=True, max_length=1, choices=GENDER_CHOICES)
     image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+
+    request_stars = models.FloatField(null=True, blank=True)
+    work_stars = models.FloatField(null=True, blank=True)
+
+    def recalculate_stars(self):
+        self.request_stars = Knock.objects.filter(requester=self.user).aggregate(Avg('request_stars'))['request_stars__avg']
+        self.work_stars = Knock.objects.filter(requester=self.user).aggregate(Avg('work_stars'))['work_stars__avg']
 
     def save(self, *args, **kwargs):
         if self.image.name in ['default.jpg', 'male.jpg', 'female.jpg']:
@@ -73,12 +80,10 @@ class Knock(models.Model):
     request_end_time = models.TimeField()
 
     request_price = MoneyField(
-        null=True,
-        blank=True,
+        default=0,
         max_digits=6,
         decimal_places=2,
         default_currency='EUR',
-        editable=True,
     )
 
     assigned_to = models.ForeignKey(get_user_model(), null=True, blank=True, on_delete=models.PROTECT, related_name='works')

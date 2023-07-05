@@ -18,20 +18,16 @@ class UserAdmin(BaseUserAdmin):
         'email',
         'first_name',
         'last_name',
-        # 'submits_count',
-        'requests_count',
-        'works_count',
+        'request_stars',
+        'work_stars'
     ]
     inlines = [ProfileInline]
 
-    # def submits_count(self, obj):
-    #     return obj.submits.count()
+    def request_stars(self, obj):
+        return obj.profile.request_stars
 
-    def works_count(self, obj):
-        return obj.works.count()
-
-    def requests_count(self, obj):
-        return obj.requests.count()
+    def work_stars(self, obj):
+        return obj.profile.work_stars
 
 
 admin.site.unregister(get_user_model())

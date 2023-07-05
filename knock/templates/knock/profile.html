@@ -1,46 +1,63 @@
 {% extends "knock/base.html" %}
 
 {% block page-css %}
-    .rounded-circle {
-        border-radius: 100%;
-    }
-    .account-img {
-        height: 100px;
-        width: 100px;
-    }
+    <style>
+        .rounded-circle {
+            border-radius: 100%;
+        }
+
+        .account-img {
+            height: 100px;
+            width: 100px;
+        }
+    </style>
 {% endblock page-css %}
 
 {% block content %}
 
-<h3>{{ user_profile.first_name }} {{ user_profile.last_name }}</h3>
-<img height="100px" width="100px" alt="image-profile" class="rounded-circle account-img" src="{{ user_profile.profile.image.url }}" />
-<br/>
-<br/>Request rating: {{ request_rating |floatformat:2 |default:" - " }}
-{% if perms.knock.can_submit_for_knocks %}
-    <br/>Work rating: {{ work_rating |floatformat:2 |default:" - " }}
-{% endif %}
-<br/>
-<br/>History:
-<ul>
-    {% for knock in knocks %}
-        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
-    {% endfor %}
-</ul>
+    <div class="row">
+        <div class="center">
+            <h3>{{ user_profile.first_name }} {{ user_profile.last_name }}</h3>
+            <img height="100px"
+                 width="100px"
+                 alt="image-profile"
+                 class="rounded-circle account-img"
+                 src="{{ user_profile.profile.image.url }}" />
+            <p>
+                Request {% component "stars" stars=user.profile.request_stars %}
+                - Work {% component "stars" stars=user.profile.work_stars %}
+            </p>
+        </div>
+        <div class="center">
+            <h4>History</h4>
 
-{% if u_form and p_form %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Profile Info</legend>
-            {{ u_form.as_p }}
-            <!-- User form -->
-            {{ p_form.as_p }}
-            <!-- Profile form -->
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Update</button>
+            {% if knocks %}
+                {% component "paginator" iterable=knocks %}
+                <ul class="browser-default knocks">
+                    {% for knock in knocks %}
+                        {% component "knocky" knock=knock %}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        {% if request.user.pk == user_profile.pk %}
+            <hr class="space">
+
+            <div class="center">
+                <a class="btn" href="{% url 'my-profile-edit' %}">Update Profile</a>
             </div>
-        </fieldset>
-    </form>
-{% endif %}
+        {% endif %}
+
+        <hr class="space">
+    </div>
 
 {% endblock content %}
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            M.AutoInit();
+        });
+    </script>
+{% endblock script %}

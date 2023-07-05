@@ -41,6 +41,10 @@ class Command(BaseCommand):
             knock = rate_knock(faker)
             knock.save()
 
+            for profile in [knock.requester.profile, knock.assigned_to.profile]:
+                profile.recalculate_stars()
+                profile.save()
+
             status_str = knock.get_status_display().upper()
 
             print(f'[{idx + 1}] Knock Knock {knock} rated - Current status: {status_str}')

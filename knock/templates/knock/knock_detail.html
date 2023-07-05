@@ -2,92 +2,197 @@
 
 {% block content %}
 
-<br/><h4>{{ object }}</h4>
-<h6>{{ object.description }}</h6>
+    <div class="center">
+        <h4>{{ knock.title }}</h4>
+        <h6>
+            {{ knock.description|default:"<i>No description</i>" }}
+        </h6>
+        <p>When: {{ knock.request_date|date:"d/m/y" }} from {{ knock.request_start_time|time:"H:i" }} to {{ knock.request_end_time|time:"H:i" }}</p>
+        <div>
+            <strong>Requester</strong>
+            <br />
+            {% component "user_chip" user=knock.requester %}
+            {% if knock.request_stars %}
+                <br>
+                {% component "stars" stars=knock.request_stars %}
+            {% endif %}
+        </div>
+        {% if knock.assigned_to %}
+            <div>
+                <strong>Assignee</strong>
+                <br />
+                {% component "user_chip" user=knock.assigned_to as_request=False %}
+                {% if knock.work_stars %}
+                    <br>
+                    {% component "stars" stars=knock.work_stars %}
+                {% endif %}
+            </div>
+        {% endif %}
+        <h4>{{ knock.request_price|default:"Free" }}</h4>
+        <div>{% component "status" status=knock.status %}</div>
 
-<br/><h5>Status: {{ object.get_status_display }}</h5>
+    </div>
 
-{% if object.assigned_to %}
-    <br/>Assigned to: <a href="{% url 'profile' object.assigned_to.pk %}">{{ object.assigned_to }}</a>
+    {% if user.is_authenticated and user.pk == knock.requester.pk and knock.chats.count > 0 %}
+        <hr class="space">
 
-    {% if object.work_stars %}
-        <br/>User <a href="{% url 'profile' object.requester.pk %}">{{ object.requester }}</a> rated Worker <a href="{% url 'profile' object.assigned_to.pk %}">{{ object.assigned_to }}</a>: {{ object.get_work_stars_display }}
-    {% endif %}
-    {% if object.request_stars %}
-        <br/>Worker <a href="{% url 'profile' object.assigned_to.pk %}">{{ object.assigned_to }}</a> rated User <a href="{% url 'profile' object.requester.pk %}">{{ object.requester }}</a>: {{ object.get_request_stars_display }}
-    {% endif %}
+        <div class="center">
+            <h5>Open chats</h5>
+            <ul>
+                {% for chat in knock.chats.all %}
+                    <li>
+                        {% component_block "user_chip" user=chat.user as_request=False %}
+                        {% fill "url" %}{% url 'chat' chat.knock.pk chat.user.pk %}{% endfill %}
+                    {% endcomponent_block %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endif %}
 
-{% if user.is_authenticated %}
-    {% if user.pk == object.requester.pk %}
-        <br>
-        {% comment %} <br><a href="{% url 'knock-update' object.pk %}">Edit</a> {% endcomment %}
-        {% if object.status == 'O' or object.status == 'R' %}
-            <br><a href="{% url 'knock-delete' object.pk %}">Delete</a>
-        {% endif %}
-    {% endif %}
+{% if not knock.assigned_to and knock.knocksubmit_set.count > 0 %}
+    <hr class="space">
 
-    {% if user.pk != object.requester.pk and user not in object.submits.all and not object.assigned_to and perms.knock.can_submit_for_knocks %}
-        <br>
-        <br><a href="{% url 'knock-submit' object.pk %}">Submit</a>
-    {% endif %}
-
-    {% if user.pk != object.requester.pk %}
-        {% if not object.assigned_to or user.pk == object.assigned_to.pk %}
-            <br>
-            <br><a href="{% url 'chat' object.pk user.pk %}">Chat with {{ object.requester }}</a>
-        {% endif %}
-    {% endif %}
-
-    {% if object.status == 'D' %}
-        {% if user.pk == object.requester.pk and not object.work_stars or user.pk == object.assigned_to.pk and not object.request_stars %}
-            <br>
-            <br>
-            <form action="{% url 'knock-rating' object.pk %}" method="post">
-                {% csrf_token %}
-                <label class="rating-label">
-                    <p><strong>Rate for {{ object.assigned_to }}</strong></p>
-                    <input
-                    name="rating"
-                    min="1"
-                    max="5"
-                    oninput="this.style.setProperty('--value', this.value)"
-                    step="1"
-                    type="range">
-                </label>
-                <input type="submit" value="Rate">
-            </form>
-        {% endif %}
-    {% endif %}
-{% endif %}
-
-{% if not object.assigned_to and object.knocksubmit_set.count > 0 %}
-    <br/>
-    <br/>List of user submits:
-    <ul>
-        {% for knock_submit in object.knocksubmit_set.all|dictsort:"submit_time" %}
-            {% if user.pk == knock.requester.pk %}
-                <li>
-                    <a href="{% url 'knock-assign_to' knock.pk knock_submit.user.pk %}">{{ knock_submit.user }} - {{ knock_submit.user.first_name }} {{ knock_submit.user.last_name }} submitted on <span title="{{ knock_submit.submit_time|date:"c" }}">{{ knock_submit.submit_time }}</span></a>
-                    <a href="{% url 'chat' object.pk knock_submit.user.pk %}">Chat with {{ knock_submit.user }}</a>
+    <div class="center">
+        <h5>User submissions</h5>
+        <ul>
+            {% for knock_submit in knock.knocksubmit_set.all|dictsort:"submit_time" %}
+                {% if user.pk == knock.requester.pk %}
+                    <li>
+                        <br>
+                        {% component_block "user_chip" user=knock_submit.user as_request=False %}
+                        {% fill "url" %}{% url 'knock-assign_to' knock.pk knock_submit.user.pk %}{% endfill %}
+                    {% endcomponent_block %}
+                    <a class="btn-floating" href="{% url 'chat' knock.pk knock_submit.user.pk %}"><i class="fa fa-comments"></i></a>
+                    <br>
+                    <small title="{{ knock_submit.submit_time|date:"c" }}">{{ knock_submit.submit_time }}</small>
                 </li>
             {% else %}
                 <li>
-                    <a href="{% url 'profile' knock_submit.user.pk %}">{{ knock_submit.user }} - {{ knock_submit.user.first_name }} {{ knock_submit.user.last_name }}</a> submitted on <span title="{{ knock_submit.submit_time|date:"c" }}">{{ knock_submit.submit_time }}</span>
-                </li>
-            {% endif %}
-        {% endfor %}
-    </ul>
+                    {% component_block "user_chip" user=knock_submit.user as_request=False %}
+                    {% fill "url" %}{% url 'profile' knock_submit.user.pk %}{% endfill %}
+                {% endcomponent_block %}
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+</div>
 {% endif %}
 
-{% if object.chats.count > 0 %}
-    <br/>
-    <br/>List of chats:
-    <ul>
-        {% for chat in object.chats.all %}
-            <li><a href="{% url 'chat' chat.knock.pk chat.user.pk %}">{{ chat }}</a></li>
-        {% endfor %}
-    </ul>
+{% if user.is_authenticated %}
+    <hr class="space">
+
+    <div class="center">
+        {% if user.pk == knock.requester.pk %}
+            {% if knock.status == 'O' or knock.status == 'R' %}
+                <a class="btn red" href="{% url 'knock-delete' knock.pk %}">Delete</a>
+            {% endif %}
+        {% endif %}
+
+        {% if user.pk != knock.requester.pk and user not in knock.submits.all and not knock.assigned_to and perms.knock.can_submit_for_knocks %}
+            <a class="btn" href="{% url 'knock-submit' knock.pk %}">Submit</a>
+        {% endif %}
+
+        {% if user.pk != knock.requester.pk and not knock.request_stars %}
+            {% if not knock.assigned_to or user.pk == knock.assigned_to.pk %}
+                <a class="btn" href="{% url 'chat' knock.pk user.pk %}">Chat with {{ knock.requester }}</a>
+            {% endif %}
+        {% endif %}
+
+        {% if knock.status == 'D' %}
+            {% if user.pk == knock.requester.pk and not knock.work_stars or user.pk == knock.assigned_to.pk and not knock.request_stars %}
+                <form action="{% url 'knock-rating' knock.pk %}" method="post">
+                    {% csrf_token %}
+                    <div class="rate" style="margin: 30px 0">
+                        <label for="rate-1">
+                            <i class="fa fa-star fa-2xl"></i>
+                        </label>
+                        <input type="radio" name="rating" value="1" id="rate-1">
+                    </input>
+                    <label for="rate-2">
+                        <i class="fa fa-star fa-2xl"></i>
+                    </label>
+                    <input type="radio" name="rating" value="2" id="rate-2">
+                </input>
+                <label for="rate-3">
+                    <i class="fa fa-star fa-2xl"></i>
+                </label>
+                <input type="radio" name="rating" value="3" id="rate-3">
+            </input>
+            <label for="rate-4">
+                <i class="fa fa-star fa-2xl"></i>
+            </label>
+            <input type="radio" name="rating" value="4" id="rate-4">
+        </input>
+        <label for="rate-5">
+            <i class="fa fa-star fa-2xl"></i>
+        </label>
+        <input type="radio" name="rating" value="5" id="rate-5">
+    </input>
+</div>
+<input class="btn" type="submit" value="Rate other user">
+</form>
 {% endif %}
+{% endif %}
+</div>
+{% endif %}
+
+<hr class="space">
 
 {% endblock content %}
+
+{% block script %}
+    <script>
+        document.querySelectorAll('.rate .fa').forEach((elem, idx) => {
+            elem.onmouseover = () => {
+                document.querySelectorAll('.rate .fa').forEach((e, i) => {
+                    e.classList.remove('fa-star');
+                    e.classList.remove('fa-star-half-o');
+                    e.classList.remove('checked');
+
+                    if (i < idx) {
+                        e.classList.add('fa-star');
+                        e.classList.add('checked');
+                    }
+
+                    if (i == idx) {
+                        e.classList.add('fa-star-half-o');
+                        e.classList.add('checked');
+                    }
+
+                    if (i > idx) {
+                        e.classList.add('fa-star');
+                    }
+                });
+            };
+
+            elem.onclick = () => {
+                document.querySelectorAll('.rate .fa').forEach((e, i) => {
+                    e.classList.remove('fa-star');
+                    e.classList.remove('fa-star-half-o');
+                    e.classList.remove('checked');
+                    e.classList.remove('confirmed');
+
+                    if (i <= idx) {
+                        e.classList.add('fa-star');
+                        e.classList.add('confirmed');
+                    }
+
+                    if (i > idx) {
+                        e.classList.add('fa-star');
+                    }
+                });
+            };
+        });
+
+        document.querySelectorAll('.rate').forEach((elem, idx) => {
+            elem.onmouseout = () => {
+                document.querySelectorAll('.rate .fa').forEach((e, i) => {
+                    e.classList.remove('checked');
+                    e.classList.remove('fa-star-half-o');
+                    e.classList.add('fa-star');
+                });
+            };
+        });
+    </script>
+{% endblock script %}

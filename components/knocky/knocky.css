@@ -1,0 +1,74 @@
+
+.knock {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: grid;
+    grid-template-columns: 1fr 5px auto 5px 1fr;
+    grid-template-rows: auto 5px auto auto auto auto;
+    grid-template-areas:
+        "T T T . TR"
+        ". . . . ."
+        "C C C C C"
+        ". . . . ."
+        "BL . B . BR"
+        "SL . . . SR";
+}
+
+.knock .title {
+    grid-area: T;
+}
+
+.knock .request_date {
+    grid-area: TR;
+    font-size: 0.8rem;
+}
+
+.knock .description {
+    grid-area: C;
+    font-size: 0.8rem;
+}
+
+.knock .price {
+    grid-area: B;
+    color: var(--main-5);
+}
+
+.knock .requester {
+    grid-area: BL;
+}
+/*
+.knock .category {
+    grid-area: B;
+    font-size: 1.2rem;
+} */
+
+.knock .request_stars {
+    grid-area: SL;
+    font-size: 1.2rem;
+}
+
+.knock .work_stars {
+    grid-area: SR;
+    font-size: 1.2rem;
+}
+
+.knock .assigned_to {
+    grid-area: BR;
+    font-size: 1.2rem;
+}
+
+
+
+
+.category.BUY {
+    color: cyan;
+}
+
+.category.MEET {
+    color: lightblue;
+}
+
+.category.DO {
+    color: turquoise;
+}

@@ -1,0 +1,9 @@
+{% for i in '12345'|make_list %}
+    {% if stars >= forloop.counter %}
+        <i class="fa fa-star"></i>
+    {% elif stars > forloop.counter0 and stars < forloop.counter %}
+        <i class="fa fa-star-half-o"></i>
+    {% else %}
+        <i class="fa fa-star-o"></i>
+    {% endif %}
+{% endfor %}

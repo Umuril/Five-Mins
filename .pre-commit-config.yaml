@@ -1,4 +1,9 @@
-exclude: .*migrations\/.*
+exclude: |
+    (?x)^(
+        migrations/.*|
+        tests/.*|
+        static/ext/.*
+    )$
 
 default_language_version:
   python: python3.11
@@ -58,11 +63,13 @@ repos:
   - repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.31.1
     hooks:
-      - id: djlint-django
+      - id: djlint
+        args: ["--profile=django", "--reformat", "--quiet", "--format-css", "--format-js", "--max-line-length", "150", "--max-attribute-length", "120", "--max-blank-lines", "1"]
+        exclude: ".*/static/ext/.*"
   - repo: https://github.com/PyCQA/pylint
     rev: v2.17.4
     hooks:
       - id: pylint
         exclude: "(.*/(migrations)/.*|manage.py)"
         args: ["--rcfile=.pylintrc", "--load-plugins=pylint_django", "--django-settings-module=knock_knock.settings", "--max-line-length=150"]
-        additional_dependencies: ['pylint_django', 'asgiref', 'django', 'django-debug-toolbar', 'django-money', 'faker', 'pre-commit', 'sqlparse', 'django_apscheduler', 'channels', 'daphne', 'pillow']
+        additional_dependencies: ['pylint_django', 'asgiref', 'django', 'django-debug-toolbar', 'django-money', 'faker', 'pre-commit', 'sqlparse', 'django_apscheduler', 'channels', 'daphne', 'pillow', 'django_components']

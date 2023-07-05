@@ -1,51 +1,96 @@
 {% extends "knock/base.html" %}
 
+{% block page-css %}
+    <style>
+        #messages p {
+            margin: 5px 0;
+        }
+
+        .message {
+            background-color: white;
+            padding: 5px 30px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+    </style>
+
+{% endblock page-css %}
+
 {% block content %}
 
-<h1>Welcome to the chat with {{ receiver }}!</h1>
-
-<div id="messages">
-    {% for message in chat.messages.all %}
-        <p>{{ message }}</p>
-    {% endfor %}
-</div>
-
-{% if can_write %}
-    <form id="chat_form" action="{% url 'chat' chat.knock.pk chat.user.pk %}" method="post">
-        {% csrf_token %}
-        <input type="text" name="text" id="text">
-        <input type="submit" id="submit_msg" value="Send">
-    </form>
-{% endif %}
+    <div class="center sticky-top">
+        <h1>CHAT</h1>
+        {% if chat.user.pk == request.user.pk %}
+            <span class="left-align">{% component "user_chip" user=chat.knock.requester with_stars=False %}</span>
+            <span class="right-align">{% component "user_chip" user=chat.user with_stars=False %}</span>
+        {% else %}
+            <span class="left-align">{% component "user_chip" user=chat.user with_stars=False %}</span>
+            <span class="right-align">{% component "user_chip" user=chat.knock.requester with_stars=False %}</span>
+        {% endif %}
+        <hr>
+    </div>
+    <div class="row">
+        <div class="col s1"></div>
+        <div class="col s10" id="messages">
+            {% for message in chat.messages.all %}
+                <p class="left-align {% if message.sender.pk == request.user.pk %}right-align{% endif %}">
+                    <span class="message">{{ message.text }}</span>
+                </p>
+            {% endfor %}
+            {% if can_write %}{% endif %}
+        </div>
+    </div>
+    <div class="row sticky-bottom">
+        <div class="col s1"></div>
+        <div class="col s10">
+            <form id="chat_form" action="{% url 'chat' chat.knock.pk chat.user.pk %}" method="post">
+                {% csrf_token %}
+                <input type="text" name="text" id="text">
+            </form>
+        </div>
+    </div>
 
 {% endblock content %}
 
 {% block script %}
-<script>
-    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/{{ chat.pk }}/');
+    <script>
+        const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/{{ chat.pk }}/');
 
-    chatSocket.onopen = function (e) {
-        console.log("Successfully connected to the WebSocket.");
-    };
+        chatSocket.onopen = function(e) {
+            console.log("Successfully connected to the WebSocket.");
+        };
 
-    document.querySelector('#chat_form').onsubmit = function (e) {
-        e.preventDefault();
-        const messageInputDom = document.querySelector('#text');
-        const message = messageInputDom.value;
-        const payload = JSON.stringify({'message': message,});
-        console.log("Sending: ", payload);
-        chatSocket.send(payload);
-        messageInputDom.value = '';
-    };
+        document.querySelector('#chat_form').onsubmit = function(e) {
+            e.preventDefault();
+            const messageInputDom = document.querySelector('#text');
+            const message = messageInputDom.value;
+            const payload = JSON.stringify({
+                'message': message,
+            });
+            console.log("Sending: ", payload);
+            chatSocket.send(payload);
+            messageInputDom.value = '';
+        };
 
-    chatSocket.onmessage = function (e) {
-        console.log("Receive: ", e);
-        const div = document.querySelector('#messages');
-        const data = JSON.parse(e.data);
-        const message = data.message;
-        var p = document.createElement("p");
-        p.innerHTML = message;
-        div.appendChild(p);
-    };
-</script>
+        chatSocket.onmessage = function(e) {
+            console.log("Receive: ", e);
+            const div = document.querySelector('#messages');
+            const data = JSON.parse(e.data);
+            const message = data.message;
+            var p = document.createElement("p");
+            var span = document.createElement("span");
+            span.innerHTML = message;
+            span.classList.add('message');
+            if (data.sender === '{{ request.user }}') {
+                p.classList.add('right-align');
+            } else {
+                p.classList.add('left-align');
+            }
+            p.appendChild(span);
+            div.appendChild(p);
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+
+        window.scrollTo(0, document.body.scrollHeight);
+    </script>
 {% endblock script %}

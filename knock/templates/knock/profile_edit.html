@@ -1,0 +1,53 @@
+{% extends "knock/base.html" %}
+
+{% block page-css %}
+    <style>
+        .rounded-circle {
+            border-radius: 100%;
+        }
+
+        .account-img {
+            height: 100px;
+            width: 100px;
+        }
+    </style>
+{% endblock page-css %}
+
+{% block content %}
+
+    <div class="center row">
+        <div class="col s2"></div>
+        <div class="col s8">
+            <div class="row my-3 p-3">
+                <img class="rounded-circle account-img" src="{{ user.profile.image.url }} " style="cursor: pointer;" />
+            </div>
+            {% if user_form.errors %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <div id="form_errors">
+                        {% for key, value in user_form.errors.items %}<strong>{{ value }}</strong>{% endfor %}
+                    </div>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endif %}
+            <div class="form-content">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ user_form.as_p }}
+                    {{ profile_form.as_p }}
+                    <button type="submit" class="btn btn-dark btn-lg">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            M.FormSelect.init(document.querySelectorAll('select'), {});
+        });
+    </script>
+{% endblock script %}

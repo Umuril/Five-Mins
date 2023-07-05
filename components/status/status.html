@@ -1,0 +1,22 @@
+{% comment %} https://stackoverflow.com/questions/36760716/html5-css3-layout-to-show-tasks-running-status {% endcomment %}
+<div class="project">
+    <div class="task open {% if num >= 1 %}active{% endif %}"></div>
+    <div class="progress reserved">
+        <div class="{% if num >= 2 %}active{% endif %}"></div>
+    </div>
+    <div class="task reserved {% if num >= 2 %}active{% endif %}"></div>
+    <div class="progress in_progress">
+        <div class="{% if num >= 3 %}active{% endif %}"></div>
+    </div>
+    <div class="task in_progress {% if num >= 3 %}active{% endif %}"></div>
+    <div class="progress done">
+        <div class="{% if num >= 4 %}active{% endif %}"></div>
+    </div>
+    <div class="task done {% if num >= 4 %}active{% endif %}">
+        <div></div>
+    </div>
+    <div class="progress closed">
+        <div class="{% if num >= 5 %}active{% endif %}"></div>
+    </div>
+    <div class="task closed {% if num >= 5 %}active{% endif %}"></div>
+</div>

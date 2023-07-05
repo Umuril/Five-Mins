@@ -7,14 +7,15 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
-from django.db.models import Avg, Q
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DeleteView, DetailView
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 
 from knock.forms import (KnockForm, ProfileUpdateForm, UserRegisterForm,
                          UserUpdateForm)
-from knock.models import Knock, KnockChat, KnockChatMessage, KnockSubmit
+from knock.models import (Knock, KnockChat, KnockChatMessage, KnockSubmit,
+                          Profile)
 
 
 def homepage(request):
@@ -28,8 +29,10 @@ def homepage(request):
         my_knocks = Knock.objects.filter(first_filter | second_filter).select_related('requester')
 
         my_submits = Knock.objects.filter(submits=request.user.pk, status=Knock.Status.OPEN).select_related('requester')
-
-    last_updated_knocks = Knock.objects.exclude().select_related('requester').order_by('-update_time')
+        last_updated_knocks = Knock.objects.exclude(first_filter | second_filter).select_related('requester').order_by('-update_time')
+    else:
+        last_updated_knocks = Knock.objects.all().select_related('requester').order_by('-update_time')
+        # last_updated_knocks = Knock.objects.all().select_related('requester').order_by('?')
 
     paginator = Paginator(last_updated_knocks, 20)
     page = request.GET.get('page')
@@ -69,6 +72,29 @@ class KnockDetailView(DetailView):
 
     def get_queryset(self):
         return super().get_queryset().prefetch_related('knocksubmit_set__user')
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    model = Profile
+    form_class = ProfileUpdateForm
+
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Your profile is updated successfully')
+            return redirect(to='my-profile')
+    else:
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
+
+    return render(request, 'knock/profile_edit.html', {'user_form': user_form, 'profile_form': profile_form})
 
 
 @login_required
@@ -128,6 +154,10 @@ def rating(request, knock_pk):
         knock.request_stars = rating_value
         knock.save()
 
+        user_profile = knock.requester.profile
+        user_profile.recalculate_stars()
+        user_profile.save()
+
     elif knock.requester.pk == request.user.pk:
         # User who created the Knock Knock rating the Worker
 
@@ -136,6 +166,10 @@ def rating(request, knock_pk):
 
         knock.work_stars = rating_value
         knock.save()
+
+        user_profile = knock.requester.profile
+        user_profile.recalculate_stars()
+        user_profile.save()
     else:
         raise PermissionDenied('Only requester and assigned can rate this Knock Knock')
 
@@ -157,44 +191,30 @@ def register(request):
             return redirect('login', )
     else:
         form = UserRegisterForm()
-    return render(request, 'knock/register.html', {'form': form})
+    return render(request, 'registration/register.html', {'form': form})
 
 
 def profile(request, user_pk):
-    if request.method == 'POST':
-        if not request.user.is_authenticated or user_pk != request.user.pk:
-            raise PermissionDenied('Cannot change other user profile')
-
-        u_form = UserUpdateForm(request.POST, instance=request.user)
-        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-
-        if u_form.is_valid() and p_form.is_valid():
-            u_form.save()
-            p_form.save()
-            messages.success(request, 'Your account has been updated!')
-            return redirect(reverse('profile', args=[request.user.pk]))
-
-    elif request.user.is_authenticated and user_pk == request.user.pk:
-        u_form = UserUpdateForm(instance=request.user)
-        p_form = ProfileUpdateForm(instance=request.user.profile)
+    if request.user.is_authenticated and user_pk == request.user.pk:
         user_profile = request.user
     else:
-        u_form = None
-        p_form = None
         user_profile = get_object_or_404(get_user_model(), pk=user_pk)
 
     knocks = Knock.objects.filter(Q(requester=user_pk) | Q(assigned_to=user_pk)).select_related('requester').order_by('-update_time')
 
-    request_rating = Knock.objects.filter(requester=user_pk).aggregate(Avg('request_stars'))['request_stars__avg']
-    work_rating = Knock.objects.filter(assigned_to=user_pk).aggregate(Avg('work_stars'))['work_stars__avg']
+    paginator = Paginator(knocks, 5)
+    page = request.GET.get('page')
+
+    try:
+        knocks = paginator.page(page)
+    except PageNotAnInteger:
+        knocks = paginator.page(1)
+    except EmptyPage:
+        knocks = paginator.page(paginator.num_pages)
 
     ctx = {
         'user_profile': user_profile,
         'knocks': knocks,
-        'request_rating': request_rating,
-        'work_rating': work_rating,
-        'u_form': u_form,
-        'p_form': p_form
     }
 
     return render(request, 'knock/profile.html', context=ctx)
@@ -209,17 +229,22 @@ def search(request):
     if title.strip():
         filters += [Q(title__icontains=title)]
 
-    date = request.GET.get('date', '')
-    if title is not None:
-        try:
-            date = datetime.date.fromisoformat(date)
-            filters += [Q(request_date=date)]
-        except ValueError:
-            pass
-
     category = request.GET.get('category', '')
     if category.strip():
         filters += [Q(category__icontains=category)]
+
+    status = request.GET.get('status', '')
+    if status.strip():
+        filters += [Q(status=status[0])]
+
+    date = request.GET.get('date', '')
+    try:
+        date = datetime.date.fromisoformat(date)
+        filters += [Q(request_date=date)]
+    except ValueError:
+        pass
+        # if len(title) == 0 and len(category) == 0 and len(status) == 0:
+        # date = datetime.date.today()
 
     filter_acc = Q()
     if len(filters) > 0:
@@ -237,9 +262,9 @@ def search(request):
     except EmptyPage:
         results = paginator.page(paginator.num_pages)
 
-    url_params = f'title={title}&date={date}&category={category}'
+    url_params = f'title={title}&date={date}&category={category}&status={status}'
 
-    ctx = {'results': results, 'url_params': url_params}
+    ctx = {'results': results, 'url_params': url_params, 'current': {'title': title, 'date': date, 'category': category, 'status': status}}
 
     return render(request, 'knock/search.html', context=ctx)
 

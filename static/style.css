@@ -1,0 +1,148 @@
+:root {
+    --main-1: #5d2906;
+    --main-2: #82490b;
+    --main-3: #b76f20;
+    --main-4: #8b6e2b;
+    --main-5: #d4bb7e;
+    --status-open: #4caf50;
+    --status-reserved: #449e48;
+    --status-in-progress: #3d8c40;
+    --status-done: #357a38;
+    --status-closed: #2e6930;
+}
+
+a {
+    color: inherit;
+    text-decoration: inherit;
+}
+
+body {
+    background-color: var(--main-5);
+}
+
+.topnav {
+    overflow: hidden;
+    background-color: var(--main-1);
+    position: relative;
+}
+
+.topnav>.logo {
+    padding: 10px 0px 5px 20px;
+}
+
+.topnav .logo> img {
+    padding: 10px;
+}
+
+.topnav>.links {
+    display: none;
+    background-color: var(--main-2);
+}
+
+.topnav>.links a {
+    display: block;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border: var(--main-4) 1px solid;
+}
+
+.topnav .icons {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.topnav .icons span {
+    color: var(--main-5);
+    padding: 14px 16px;
+    font-size: 17px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.topnav .links a:focus {
+    background-color: var(--main-4);
+}
+
+.knocks {
+    list-style-type: none;
+    padding: 0px 20px;
+}
+
+.knocks li {
+    margin: 20px 0px;
+    padding: 10px;
+    box-shadow: 5px 5px 10px var(--main-2);
+    border-radius: 30px;
+}
+
+.knocks li.open {
+    background-color: var(--status-open);
+}
+
+.knocks li.reserved {
+    background-color: var(--status-reserved);
+}
+
+.knocks li.in_progress {
+    background-color: var(--status-in-progress);
+}
+
+.knocks li.done {
+    background-color: var(--status-done);
+}
+
+.knocks li.closed {
+    background-color: var(--status-closed);
+}
+
+.paginator {
+    text-align: center;
+    justify-content: space-between;
+    display: flex;
+    padding: 5px 20px;
+}
+
+.paginator .active {
+    font-size: 1.4rem;
+}
+
+.requester img {
+    border-radius: 100%;
+}
+
+.assigned_to img {
+    border-radius: 100%;
+}
+
+hr.space {
+    margin-top: 50px;
+}
+
+.rate .fa.confirmed {
+    color: green;
+}
+
+.rate .fa.checked {
+    color: orange;
+}
+
+.rate .fa {
+    font-size: 20px;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+    background-color: var(--main-5);
+    padding-top: 20px;
+}
+
+.sticky-bottom {
+    position: sticky;
+    bottom: 0;
+    background-color: #a28c56;
+    border-radius: 50px;
+}

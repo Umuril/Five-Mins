@@ -1,0 +1,33 @@
+<a href="{% url 'knock-detail' knock.pk %}">
+    <li class="{{ knock.get_status_display.lower.split|join:"_" }}">
+        <div class="knock">
+            <div class="title">{{ knock.title }}</div>
+            <div class="request_date">
+                {{ knock.request_date|date:"d/m/y" }}
+                <br />
+                {{ knock.request_start_time|time:"H:i" }} - {{ knock.request_end_time|time:"H:i" }}
+            </div>
+            <div class="description">
+                <p>
+                    {{ knock.description|default:"<i>No description</i>" }}
+                </p>
+            </div>
+            <div class="requester" onclick="location.href='{% url 'profile' knock.requester.pk %}'; return false;">
+                <img width="20px" src="{{ knock.requester.profile.image.url }}" title="{{ knock.requester }}" />
+            </div>
+            {% if knock.request_stars %}
+                <div class="request_stars">{% component "stars" stars=knock.request_stars %}</div>
+            {% endif %}
+            {% comment %} <div class="category {{ knock.category.upper }}">{{ knock.category.upper }}</div> {% endcomment %}
+            <div class="price">{{ knock.request_price|default:"Free" }}</div>
+            {% if knock.assigned_to %}
+                <div class="assigned_to" onclick="location.href='{% url 'profile' knock.assigned_to.pk %}'; return false;">
+                    <img width="20px" src="{{ knock.assigned_to.profile.image.url }}" title="{{ knock.assigned_to }}" />
+                </div>
+            {% endif %}
+            {% if knock.work_stars %}
+                <div class="work_stars">{% component "stars" stars=knock.work_stars %}</div>
+            {% endif %}
+        </div>
+    </li>
+</a>

@@ -1,0 +1,106 @@
+.project * {
+    box-sizing: border-box;
+}
+
+.project {
+    margin: 0 auto;
+}
+
+.project>div {
+    display: inline-block;
+    margin: 0 -8px 0 0;
+    vertical-align: middle;
+}
+
+.task {
+    width: 2em;
+    height: 2em;
+    border: .4em solid #E4E4E7;
+    background: #E4E4E7;
+    border-radius: 100%;
+}
+
+.progress {
+    width: calc(25% - 3em);
+    height: .6em;
+    padding: .2em 0;
+    background: #E4E4E7;
+    position: relative;
+    z-index: 2;
+}
+
+.progress>div {
+    height: .2em;
+    left: -.4em;
+    right: -.4em;
+    position: absolute;
+}
+
+.task {
+    position: relative;
+}
+
+.task::after {
+    position: absolute;
+    margin-top: 30px;
+    width: 10em;
+    margin-left: -5em;
+    font-size: .7rem;
+    white-space: nowrap;
+}
+
+.task.open::after {
+    content: "OPEN";
+}
+
+.task.reserved::after {
+    content: "RESERVED";
+}
+
+.task.in_progress::after {
+    content: "IN PROGRESS";
+}
+
+.task.done::after {
+    content: "DONE";
+}
+
+.task.closed::after {
+    content: "CLOSED";
+}
+
+.task.open.active {
+    background: var(--status-open);
+}
+
+.progress.reserved > .active {
+    background-image: linear-gradient(to right, var(--status-open), var(--status-reserved));
+}
+
+.task.reserved.active {
+    background: var(--status-reserved);
+}
+
+.progress.in_progress > .active {
+    background-image: linear-gradient(to right, var(--status-reserved), var(--status-in-progress));
+}
+
+.task.in_progress.active {
+    background: var(--status-in-progress);
+}
+
+.progress.done > .active {
+    background-image: linear-gradient(to right, var(--status-in-progress), var(--status-done));
+}
+
+.task.done.active {
+    background: var(--status-done);
+}
+
+.progress.closed > .active {
+    background-image: linear-gradient(to right, var(--status-done), var(--status-closed));
+}
+
+.task.closed.active {
+    background: var(--status-closed);
+}

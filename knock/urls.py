@@ -30,6 +30,7 @@ urlpatterns = [
     path('knock/<int:knock_pk>/assign_to/<int:user_pk>/', views.assing_to, name='knock-assign_to'),
     path('knock/<int:knock_pk>/rating/', views.rating, name='knock-rating'),
     path('profile/', views.my_profile, name='my-profile'),
+    path('profile/edit/', views.update_profile, name='my-profile-edit'),
     path('profile/<int:user_pk>/', views.profile, name='profile'),
     path('search/', views.search, name='search'),
     path('chat/<int:knock_pk>/with/<int:user_pk>/', views.chat, name='chat'),

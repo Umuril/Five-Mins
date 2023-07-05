@@ -21,10 +21,10 @@ class KnockForm(forms.ModelForm):
 
         widgets = {
             # https://stackoverflow.com/questions/22846048/django-form-as-p-datefield-not-showing-input-type-as-date
-            'description': forms.Textarea(),
-            'request_date': forms.DateInput(attrs={'type': 'date'}),
-            'request_start_time': forms.TimeInput(format='%H:%M', attrs={'type': 'time', 'pattern': r'[0-9]{2}:[0-9]{2}'}),
-            'request_end_time': forms.TimeInput(format='%H:%M', attrs={'type': 'time', 'pattern': r'[0-9]{2}:[0-9]{2}'}),
+            'description': forms.Textarea(attrs={'class': 'materialize-textarea'}),
+            'request_date': forms.DateInput(attrs={'type': 'text', 'class': 'datepicker'}),
+            'request_start_time': forms.TimeInput(format='%H:%M', attrs={'type': 'text', 'class': 'timepicker', 'pattern': r'[0-9]{2}:[0-9]{2}'}),
+            'request_end_time': forms.TimeInput(format='%H:%M', attrs={'type': 'text', 'class': 'timepicker', 'pattern': r'[0-9]{2}:[0-9]{2}'}),
         }
 
 
@@ -46,11 +46,17 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = ['username', 'email', 'first_name', 'last_name']
+        help_texts = {
+            'username': None,
+        }
+
 
 # Create a ProfileUpdateForm to update image.
 
 
 class ProfileUpdateForm(forms.ModelForm):
+    image = forms.ImageField(widget=forms.FileInput())
+
     class Meta:
         model = Profile
         fields = ['gender', 'image']

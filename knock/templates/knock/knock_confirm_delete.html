@@ -2,10 +2,25 @@
 
 {% block content %}
 
-<form action="" method="post">
-    {% csrf_token %}
-    <p>Are you sure you want to delete "{{ object }}"?</p>
-    <input type="submit" value="Submit">
-</form>
+    <div class="center">
+        <h1>Are you sure you want to delete:</h1>
+        <h4>{{ knock.title }}</h4>
+        <h6>
+            {{ knock.description|default:"<i>No description</i>" }}
+        </h6>
+        <p>When: {{ knock.request_date|date:"d/m/y" }} from {{ knock.request_start_time|time:"H:i" }} to {{ knock.request_end_time|time:"H:i" }}</p>
+
+        <h4>{{ knock.request_price|default:"Free" }}</h4>
+
+        <hr class="space">
+
+        <div>
+            <form style="display: inline-block" method="post">
+                {% csrf_token %}
+                <input class="btn red" type="submit" value="Confirm">
+            </form>
+            <a class="btn" href="{% url 'knock-detail' knock.pk %}">Back</a>
+        </div>
+    </div>
 
 {% endblock content %}

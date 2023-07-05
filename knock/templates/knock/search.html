@@ -2,54 +2,92 @@
 
 {% block content %}
 
-<form>
-    <p>
-        <label for="title">Title</label>
-        <input type="search" name="title" id="title" value="{{ request.GET.title }}">
-    </p>
-    <p>
-        <label for="date">Day</label>
-        <input type="date" name="date" id="date" value="{{ request.GET.date }}">
-    </p>
-    <p>
-        <label for="category">Category</label>
-        <select name="category" id="category">
-            <option value="">---</option>
-            <option value="BUY" {% if request.GET.category == 'BUY' %} selected{% endif %}>BUY</option>
-            <option value="DO" {% if request.GET.category == 'DO' %} selected{% endif %}>DO</option>
-            <option value="MEET" {% if request.GET.category == 'MEET' %} selected{% endif %}>MEET</option>
-        </select>
-    </p>
-    <p>
-        <input type="submit" value="Search">
-    </p>
-</form>
+    <div class="row"></div>
 
-{% if results %}
-    <h5>Search results</h5>
-    <ul>
-    {% for knock in results %}
-        <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}"><a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a></li>
-    {% endfor %}
-    </ul>
-{% endif %}
+    <div class="row">
+        <form class="col s12">
+            <p class="input-field col s12">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title" value="{{ current.title }}">
+            </p>
+            <p class="input-field col s12">
+                <label class="active" for="date">Day</label>
+                <input class="datepicker" type="text" name="date" id="date" value="{{ current.date|date:"c" }}">
+            </p>
+            <p class="input-field col s12">
+                <label class="active" for="category">Category</label>
+                <select name="category" id="category">
+                    <option value="">-</option>
+                    <option {% if current.category == 'BUY' %}selected{% endif %} value="BUY">BUY</option>
+                    <option {% if current.category == 'DO' %}selected{% endif %} value="DO">DO</option>
+                    <option {% if current.category == 'MEET' %}selected{% endif %} value="MEET">MEET</option>
+                </select>
+            </p>
+            <p class="input-field col s12">
+                <label class="active" for="status">Status</label>
+                <select name="status" id="status">
+                    <option value="">-</option>
+                    <option value="OPEN" {% if current.status == 'OPEN' %}selected{% endif %}>OPEN</option>
+                    <option value="RESERVED" {% if current.status == 'RESERVED' %}selected{% endif %}>RESERVED</option>
+                    <option value="IN_PROGRESS" {% if current.status == 'IN_PROGRESS' %}selected{% endif %}>IN PROGRESS</option>
+                    <option value="DONE" {% if current.status == 'DONE' %}selected{% endif %}>DONE</option>
+                    <option value="CLOSED" {% if current.status == 'CLOSED' %}selected{% endif %}>CLOSED</option>
+                </select>
+            </p>
+            <p class="center">
+                <input class="btn-small" type="submit" value="Search">
+            </p>
+        </form>
+    </div>
 
-{% if results.has_other_pages %}
-    {% if results.has_previous %}
-        <a href="?page={{ results.previous_page_number }}&{{ url_params }}">PREVIOUS</a>
-    {% else %}
-        PREVIOUS
-    {% endif %}
+    <div class="center">
+        {% if results %}
+            <h5>Search results</h5>
+            <ul class="browser-default knocks">
+                {% for knock in results %}
+                    {% component "knocky" knock=knock %}
+                    {% comment %} <li style="list-style-type: {% if knock.status == 'I' %}'🔴 '{% endif %}{% if knock.status == 'D' %}'✅ '{% endif %}">
+                        <a href="{% url 'knock-detail' knock.pk %}">{{ knock }}</a>
+                    </li> {% endcomment %}
+                {% endfor %}
+            </ul>
 
-    {% for num in results.paginator.page_range %}
-        <a href="?page={{ num }}&{{ url_params }}">{{ num }}</a>
-    {% endfor %}
+            {% component "paginator" iterable=results url_params=url_params %}
+        {% endif %}
+    </div>
 
-    {% if results.has_next %}
-        <a href="?page={{ results.next_page_number }}&{{ url_params }}">NEXT</a>
-    {% else %}
-        NEXT
-    {% endif %}
-{% endif %}
+    {% comment %} {% if results.has_other_pages %}
+        {% if results.has_previous %}
+            <a href="?page={{ results.previous_page_number }}&{{ url_params }}">PREVIOUS</a>
+        {% else %}
+            PREVIOUS
+        {% endif %}
+
+        {% for num in results.paginator.page_range %}
+            {% if num <= results.number|add:4 and num >= results.number|add:-4 %}
+                <a class="{% if results.number == num %}active{% endif %}" href="?page={{ num }}&{{ url_params }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if results.has_next %}
+            <a href="?page={{ results.next_page_number }}&{{ url_params }}">NEXT</a>
+        {% else %}
+            NEXT
+        {% endif %}
+    {% endif %} {% endcomment %}
 
 {% endblock content %}
+
+{% block script %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            M.Datepicker.init(document.querySelectorAll('.datepicker'), {
+                'showClearBtn': true,
+                'format': 'yyyy-mm-dd',
+                'autoClose': true,
+                'firstDay': 1,
+            });
+            M.FormSelect.init(document.querySelectorAll('select'), {});
+        });
+    </script>
+{% endblock script %}

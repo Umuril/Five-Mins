@@ -8,6 +8,8 @@ from knock.models import Knock
 def create_submit():
     knock = Knock.objects.filter(status=Knock.Status.OPEN).order_by('?').first()
     worker = get_user_model().objects.filter(groups__name='Test Users').filter(groups__name='Workers').order_by('?').first()
+    while knock.requester.pk == worker.pk:
+        worker = get_user_model().objects.filter(groups__name='Test Users').filter(groups__name='Workers').order_by('?').first()
     knock.submits.add(worker)
 
     return knock, worker

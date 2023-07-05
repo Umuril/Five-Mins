@@ -5,6 +5,7 @@ django
 django-apscheduler
 django-debug-toolbar
 django-money
+django_components
 faker
 pillow
 pre-commit

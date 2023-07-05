@@ -1,0 +1,11 @@
+<a class="requester chip" href="{% slot "url" %}{% url 'profile' user.pk %}{% endslot %}">
+    <img width="20px" src="{{ user.profile.image.url }}" title="{{ user }}" />
+    {{ user.get_full_name.upper }}
+    {% if with_stars %}
+        {% if as_request %}
+            - {{ user.profile.request_stars|floatformat:2|default:0 }} <i class="fa fa-star"></i>
+        {% else %}
+            - {{ user.profile.work_stars|floatformat:2|default:0 }} <i class="fa fa-star"></i>
+        {% endif %}
+    {% endif %}
+</a>

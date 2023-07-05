@@ -11,17 +11,18 @@ def both_have_rated(sender, instance, *args, **kwargs):
     # pylint: disable=unused-argument
     if instance.status == Knock.Status.DONE and instance.request_stars and instance.work_stars:
         instance.status = Knock.Status.CLOSED
-
-    if instance.status == Knock.Status.OPEN and instance.assigned_to:
+    elif instance.status == Knock.Status.OPEN and instance.assigned_to:
         instance.status = Knock.Status.RESERVED
 
 
 @receiver(post_save, sender=get_user_model())
-def create_profile(_sender, instance, created, **kwargs):
+def create_profile(sender, instance, created, **kwargs):
+    # pylint: disable=unused-argument
     if created:
         Profile.objects.create(user=instance)
 
 
 @receiver(post_save, sender=get_user_model())
-def save_profile(_sender, instance, **kwargs):
+def save_profile(sender, instance, **kwargs):
+    # pylint: disable=unused-argument
     instance.profile.save()
