@@ -9,7 +9,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.generic import CreateView, DeleteView, DetailView, UpdateView
 
 from knock.forms import (KnockForm, ProfileUpdateForm, UserRegisterForm,
@@ -54,15 +54,19 @@ class KnockCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.requester = self.request.user
+        messages.success(self.request, 'Knock knock created successfully')
         return super().form_valid(form)
 
 
 class KnockDeleteView(LoginRequiredMixin, DeleteView):
     model = Knock
-    success_url = reverse_lazy('homepage')
 
     def get_queryset(self):
         return super().get_queryset().filter(requester=self.request.user, status__in=[Knock.Status.OPEN, Knock.Status.RESERVED])
+
+    def get_success_url(self):
+        messages.success(self.request, 'Knock knock removed successfully')
+        return reverse('homepage')
 
 
 class KnockDetailView(DetailView):
@@ -110,6 +114,8 @@ def submit(request, knock_pk):
     knock.submits.add(request.user)
     knock.save()
 
+    messages.success(request, 'Knock knock submitted successfully')
+
     return redirect(reverse('knock-detail', args=[knock_pk]))
 
 
@@ -126,6 +132,8 @@ def assing_to(request, knock_pk, user_pk):
 
     knock.assigned_to = user
     knock.save()
+
+    messages.success(request, 'Knock knock assigned successfully')
 
     return redirect(reverse('knock-detail', args=[knock_pk]))
 
@@ -248,6 +256,9 @@ def search(request):
         for filt in filters:
             filter_acc &= filt
         results = Knock.objects.filter(filter_acc).select_related('requester').all()
+
+        if len(results) == 0:
+            messages.error(request, 'No results found')
 
     paginator = Paginator(results, 20)
     page = request.GET.get('page')

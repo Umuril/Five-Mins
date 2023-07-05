@@ -112,6 +112,7 @@ class Knock(models.Model):
                 check=Q(
                     request_start_time__lt=F('request_end_time')),
                 name='request_start_time must be less than request_end_time',
+                violation_error_message='End time must be after Start time'
             )]
 
 

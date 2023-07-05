@@ -2,10 +2,6 @@
 
 {% block content %}
 
-    <div class="row">
-        {% if form.errors %}<p>Your username and password didn't match. Please try again.</p>{% endif %}
-    </div>
-
     <div class="center row">
         <div class="col s1"></div>
         <form action="{% url 'knock-add' %}" method="post" class="col s10">

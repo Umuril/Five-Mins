@@ -20,6 +20,18 @@ body {
     background-color: var(--main-5);
 }
 
+.errorlist {
+    color:red;
+}
+
+.success {
+    color:green;
+}
+
+.error {
+    color: red;
+}
+
 .topnav {
     overflow: hidden;
     background-color: var(--main-1);
