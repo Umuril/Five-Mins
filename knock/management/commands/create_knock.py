@@ -20,16 +20,19 @@ def create_open_knock(faker):
     knock.category = faker.enum(Knock.Category)
 
     # knock.request_location = faker.address()
-    knock.request_price = Money(
-        faker.pyfloat(
-            left_digits=faker.pyint(
-                min_value=1,
-                max_value=3),
-            right_digits=faker.pyint(
-                min_value=0,
-                max_value=2),
-            positive=True),
-        'EUR')
+    if faker.pybool():
+        knock.request_price = Money(0, 'EUR')
+    else:
+        knock.request_price = Money(
+            faker.pyfloat(
+                left_digits=faker.pyint(
+                    min_value=1,
+                    max_value=3),
+                right_digits=faker.pyint(
+                    min_value=0,
+                    max_value=2),
+                positive=True),
+            'EUR')
 
     knock.requester = requester
     knock.request_date = faker.future_date()

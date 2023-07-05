@@ -25,7 +25,6 @@ python3 manage.py createsuperuser --noinput
 ##### CUSTOM PHASE #####
 python3 manage.py init
 python3 manage.py create_user -n 10
-python3 manage.py create_worker -n 11
 python3 manage.py create_knock -n 100
 python3 manage.py create_submit -n 100
 python3 manage.py reserve_knock -n 100

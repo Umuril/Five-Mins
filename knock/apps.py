@@ -7,4 +7,6 @@ class KnockConfig(AppConfig):
     name = 'knock'
 
     def ready(self):
-        pass
+        # pylint: disable=import-outside-toplevel
+        from knock import signals
+        print(signals.__name__)

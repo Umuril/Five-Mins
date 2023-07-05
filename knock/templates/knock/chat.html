@@ -1,46 +1,10 @@
 {% extends "knock/base.html" %}
 
-{% block page-css %}
-    <style>
-        #messages p {
-            margin: 5px 0;
-        }
-
-        .message {
-            background-color: white;
-            padding: 5px 30px;
-            border-radius: 10px;
-            display: inline-block;
-        }
-
-        .chat-sticky {
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            display: grid;
-            align-items: center;
-            grid-template-rows: auto;
-            grid-template-columns: 10px 1fr auto 1fr 10px;
-            grid-template-areas:
-                ". L C R .";
-        }
-
-        .chat-sticky>a {
-            grid-area: L;
-        }
-
-        .chat-sticky>div {
-            grid-area: C;
-        }
-    </style>
-
-{% endblock page-css %}
-
 {% block content %}
 
     <div class="center sticky-top ">
         <div class="chat-sticky">
-            <a href="{% url 'knock-detail' chat.knock.pk %}" class="btn-floating brown"><i class="fa fa-angle-double-left"></i></a>
+            <a href="{% url 'knock-detail' chat.knock.pk %}" class="btn-floating"><i class="fa fa-angle-double-left"></i></a>
             {% if chat.user.pk == request.user.pk %}
                 <div class="center">{% component "user_chip" user=chat.knock.requester with_stars=False %}</div>
             {% else %}
@@ -81,15 +45,21 @@
             console.log("Successfully connected to the WebSocket.");
         };
 
+        function isBlank(str) {
+            return (!str || /^\s*$/.test(str));
+        }
+
         document.querySelector('#chat_form').onsubmit = function(e) {
             e.preventDefault();
             const messageInputDom = document.querySelector('#text');
             const message = messageInputDom.value;
-            const payload = JSON.stringify({
-                'message': message,
-            });
-            console.log("Sending: ", payload);
-            chatSocket.send(payload);
+            if (!isBlank(message)) {
+                const payload = JSON.stringify({
+                    'message': message,
+                });
+                console.log("Sending: ", payload);
+                chatSocket.send(payload);
+            }
             messageInputDom.value = '';
         };
 

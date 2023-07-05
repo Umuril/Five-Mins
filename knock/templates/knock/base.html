@@ -13,14 +13,10 @@
         {% comment %} <link rel="stylesheet" href="{% static 'ext/fontawesome-free-6.4.0-web/css/all.min.css' %}"> {% endcomment %}
         <link rel="stylesheet" href="{% static 'ext/Fork-Awesome-1.2.0/css/fork-awesome.min.css' %}">
         <link rel="stylesheet" href="{% static 'ext/materialize/css/materialize.min.css' %}">
-        <link rel="stylesheet" href="{% static 'normalize.css' %}">
+        <link rel="stylesheet" href="{% static 'normalize.min.css' %}">
         <link rel="stylesheet" href="{% static 'style.css' %}">
 
         {% component_css_dependencies %}
-
-        {% block page-css %}
-        {% endblock page-css %}
-
     </head>
     <body>
         <div class="topnav">

@@ -1,14 +1,37 @@
 :root {
-    --main-1: #5d2906;
-    --main-2: #82490b;
-    --main-3: #b76f20;
-    --main-4: #8b6e2b;
-    --main-5: #d4bb7e;
-    --status-open: #4caf50;
-    --status-reserved: #449e48;
-    --status-in-progress: #3d8c40;
-    --status-done: #357a38;
-    --status-closed: #2e6930;
+    /* --main-header: #b6398c; */
+    --main-header: #72dfd0;
+    --main-menu: #005377;
+    --main-bg: #c7daf0;
+    --main-form-label: black;
+
+    --main-error: red;
+    --main-success: green;
+
+    --main-knock-title: #f7c7ac;
+    --main-knock-date: #f7c7ac;
+    --main-knock-price: #f16588;
+    --main-knock-chat-count: orange;
+
+    --status-open: #06a2a7;
+    --status-reserved: #068f94;
+    --status-in-progress: #048488;
+    --status-done: #04648a;
+    --status-closed: #044f6d;
+
+    --category-buy: #f16588;
+    --category-meet: #f16588;
+    --category-do: #f16588;
+
+    --star-hover: #b6398c;
+    --star-selected: #b6398c;
+
+    --chat-bg: white;
+    --chat-left-msg: #7bd4f0;
+    --chat-right-msg: #b9f6f8;
+    --chat-back: #b6398c;
+
+    --user-chip-bg: #fbd1a2;
 }
 
 a {
@@ -17,24 +40,30 @@ a {
 }
 
 body {
-    background-color: var(--main-5);
+    background-color: var(--main-bg);
+    font-size: 1.3em;
+}
+
+label {
+    font-size: 1em;
+    color: var(--main-form-label);
 }
 
 .errorlist {
-    color:red;
+    color:var(--main-error);
 }
 
 .success {
-    color:green;
+    color:var(--main-success);
 }
 
 .error {
-    color: red;
+    color: var(--main-error);
 }
 
 .topnav {
     overflow: hidden;
-    background-color: var(--main-1);
+    background-color: var(--main-header);
     position: relative;
 }
 
@@ -42,13 +71,14 @@ body {
     padding: 10px 0px 5px 20px;
 }
 
-.topnav .logo> img {
-    padding: 10px;
+
+.topnav .icons .fa {
+    font-size: 1.6em;
 }
 
 .topnav>.links {
     display: none;
-    background-color: var(--main-2);
+    background-color: var(--main-menu);
 }
 
 .topnav>.links a {
@@ -56,7 +86,7 @@ body {
     color: white;
     padding: 10px;
     text-align: center;
-    border: var(--main-4) 1px solid;
+    border: var(--main-header) 1px solid;
 }
 
 .topnav .icons {
@@ -67,7 +97,7 @@ body {
 }
 
 .topnav .icons span {
-    color: var(--main-5);
+    color: black;
     padding: 14px 16px;
     font-size: 17px;
     display: inline-block;
@@ -75,7 +105,7 @@ body {
 }
 
 .topnav .links a:focus {
-    background-color: var(--main-4);
+    background-color: var(--main-header);
 }
 
 .knocks {
@@ -86,7 +116,7 @@ body {
 .knocks li {
     margin: 20px 0px;
     padding: 10px;
-    box-shadow: 5px 5px 10px var(--main-2);
+    box-shadow: 5px 5px 10px var(--main-menu);
     border-radius: 30px;
 }
 
@@ -133,12 +163,12 @@ hr.space {
     margin-top: 50px;
 }
 
-.rate .fa.confirmed {
-    color: green;
+.rate .fa.checked {
+    color: var(--star-hover);
 }
 
-.rate .fa.checked {
-    color: orange;
+.rate .fa.confirmed {
+    color: var(--star-selected);
 }
 
 .rate .fa {
@@ -148,13 +178,71 @@ hr.space {
 .sticky-top {
     position: sticky;
     top: 0;
-    background-color: var(--main-5);
+    background-color: var(--main-bg);
     padding-top: 20px;
 }
 
 .sticky-bottom {
     position: sticky;
     bottom: 0;
-    background-color: #a28c56;
+    background-color: var(--chat-bg);
     border-radius: 50px;
+}
+
+#messages p {
+    margin: 5px 0;
+}
+
+#messages .message {
+    padding: 5px 30px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+#messages .left-align > span {
+    background-color: var(--chat-left-msg);
+}
+
+#messages .right-align > span {
+    background-color: var(--chat-right-msg);
+}
+
+.chat-sticky {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: grid;
+    align-items: center;
+    grid-template-rows: auto;
+    grid-template-columns: 10px 1fr auto 1fr 10px;
+    grid-template-areas:
+        ". L C R .";
+}
+
+.chat-sticky>a {
+    grid-area: L;
+    background-color: var(--chat-back);
+}
+
+.chat-sticky>div {
+    grid-area: C;
+}
+
+.rounded-circle {
+    border-radius: 100%;
+}
+
+.account-img {
+    height: 100px;
+    width: 100px;
+}
+
+.home-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    text-shadow: black 0px 0px 20px;
+}
+
+.fa-star, .fa-star-half-o {
+    color: var(--star-selected);
 }

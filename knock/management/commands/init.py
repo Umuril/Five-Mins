@@ -16,16 +16,22 @@ class Command(BaseCommand):
         Group.objects.get_or_create(name='Test Users')
         print('Test Users group created')
 
-        workers, _ = Group.objects.get_or_create(name='Workers')
-        print('Workers group created')
+        only_free, _ = Group.objects.get_or_create(name='Only Free Users')
+        print('Only Free Users group created')
+
+        only_work, _ = Group.objects.get_or_create(name='Only Work Users')
+        print('Only Work Users group created')
 
         content_type = ContentType.objects.get_for_model(Knock)
         permission = Permission.objects.create(
-            codename='can_submit_for_knocks',
-            name='Can submit for Knock Knocks',
-            content_type=content_type)  # creating permissions
-        workers.permissions.add(permission)
-        print('Permissions for group Workers created')
+            codename='view_only_free', name='Can view only Free Knock Knocks', content_type=content_type
+        )
+        only_free.permissions.add(permission)
+        permission = Permission.objects.create(
+            codename='view_only_work', name='Can view only Not Free Knock Knocks', content_type=content_type
+        )
+        only_work.permissions.add(permission)
+        print('Permissions for groups created')
 
         user = get_user_model().objects.get(username='root')
         profile = Profile(user=user)

@@ -3,7 +3,7 @@ import datetime
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -23,12 +23,27 @@ def homepage(request):
     my_submits = []
 
     if request.user.is_authenticated:
+
+        if request.user.has_perm('knock.view_only_free'):
+            auth_filter = Q(request_price=0)
+        elif request.user.has_perm('knock.view_only_work'):
+            auth_filter = Q(request_price__gt=0)
+        else:
+            auth_filter = Q()
+
         first_filter = Q(requester=request.user.pk) & ~Q(status=Knock.Status.CLOSED) & Q(work_stars__isnull=True)
         second_filter = Q(assigned_to=request.user.pk) & ~Q(status=Knock.Status.CLOSED) & Q(request_stars__isnull=True)
-        my_knocks = Knock.objects.filter(first_filter | second_filter).select_related('requester')
+        my_knocks = Knock.objects.filter(first_filter | second_filter).select_related('requester').order_by('-update_time')
 
-        my_submits = Knock.objects.filter(submits=request.user.pk, status=Knock.Status.OPEN).select_related('requester')
-        last_updated_knocks = Knock.objects.exclude(first_filter | second_filter).select_related('requester').order_by('-update_time')
+        four_filter = Q(submits=request.user.pk, status=Knock.Status.OPEN)
+        five_filter = Q(chats__user=request.user.pk, status=Knock.Status.OPEN)
+
+        my_submits = Knock.objects.filter(four_filter).select_related('requester') \
+            .union(Knock.objects.filter(five_filter).select_related('requester')).order_by('-update_time')
+
+        third_filter = Q(status=Knock.Status.OPEN) & ~Q(requester=request.user.pk)
+        last_updated_knocks = Knock.objects.filter(auth_filter & third_filter).exclude(
+            five_filter).select_related('requester').order_by('-update_time')
     else:
         # last_updated_knocks = Knock.objects.all().select_related('requester').order_by('-update_time')
         last_updated_knocks = Knock.objects.all().select_related('requester').order_by('?')
@@ -101,7 +116,6 @@ def update_profile(request):
 
 
 @login_required
-@permission_required('knock.can_submit_for_knocks')
 def submit(request, knock_pk):
     knock = get_object_or_404(Knock, pk=knock_pk)
 
@@ -115,6 +129,24 @@ def submit(request, knock_pk):
     knock.save()
 
     messages.success(request, 'Knock knock submitted successfully')
+
+    return redirect(reverse('knock-detail', args=[knock_pk]))
+
+
+@login_required
+def unsubmit(request, knock_pk):
+    knock = get_object_or_404(Knock, pk=knock_pk)
+
+    if knock.requester.pk == request.user.pk:
+        raise PermissionDenied('Cannot unsubmit to owned Knocks')
+
+    if not KnockSubmit.objects.filter(knock=knock, user=request.user).exists():
+        raise PermissionDenied('User never submitted for this Knock Knock')
+
+    knock.submits.remove(request.user)
+    knock.save()
+
+    messages.success(request, 'Knock knock unsubmitted successfully')
 
     return redirect(reverse('knock-detail', args=[knock_pk]))
 
@@ -255,7 +287,15 @@ def search(request):
     if len(filters) > 0:
         for filt in filters:
             filter_acc &= filt
-        results = Knock.objects.filter(filter_acc).select_related('requester').all()
+
+        if request.user.is_authenticated and request.user.has_perm('knock.view_only_free'):
+            auth_filter = Q(request_price=0)
+        elif request.user.is_authenticated and request.user.has_perm('knock.view_only_work'):
+            auth_filter = Q(request_price__gt=0)
+        else:
+            auth_filter = Q()
+
+        results = Knock.objects.filter(auth_filter & filter_acc).select_related('requester').all()
 
         if len(results) == 0:
             messages.error(request, 'No results found')

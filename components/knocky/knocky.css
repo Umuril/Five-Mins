@@ -12,36 +12,45 @@
         "C C C C C"
         ". . . . ."
         "BL . B . BR"
-        "SL . . . SR";
+        "SL . SB . SR";
+}
+
+.knock {
+    text-shadow: black 0 0 4px;
 }
 
 .knock .title {
     grid-area: T;
+    text-transform: uppercase;
+    color: var(--main-knock-title);
 }
 
 .knock .request_date {
     grid-area: TR;
-    font-size: 0.8rem;
+    color: var(--main-knock-date);
 }
 
 .knock .description {
     grid-area: C;
-    font-size: 0.8rem;
+    color: white;
 }
 
 .knock .price {
     grid-area: B;
-    color: var(--main-5);
+    color: var(--main-knock-price);
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 .knock .requester {
     grid-area: BL;
 }
-/*
+
 .knock .category {
-    grid-area: B;
-    font-size: 1.2rem;
-} */
+    grid-area: SB;
+    font-weight: bold;
+    text-transform: uppercase;
+}
 
 .knock .request_stars {
     grid-area: SL;
@@ -58,17 +67,25 @@
     font-size: 1.2rem;
 }
 
+.knock .chat_count {
+    grid-area: BR;
+}
+
+.knock .chat_count .btn-floating {
+    background-color: var(--main-knock-chat-count);
+    color: black;
+}
 
 
 
 .category.BUY {
-    color: cyan;
+    color: var(--category-buy);
 }
 
 .category.MEET {
-    color: lightblue;
+    color: var(--category-meet);
 }
 
 .category.DO {
-    color: turquoise;
+    color: var(--category-do);
 }

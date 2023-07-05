@@ -1,18 +1,5 @@
 {% extends "knock/base.html" %}
 
-{% block page-css %}
-    <style>
-        .rounded-circle {
-            border-radius: 100%;
-        }
-
-        .account-img {
-            height: 100px;
-            width: 100px;
-        }
-    </style>
-{% endblock page-css %}
-
 {% block content %}
 
     <div class="center row">
@@ -36,6 +23,32 @@
                     {% csrf_token %}
                     {{ user_form.as_p }}
                     {{ profile_form.as_p }}
+                    <div class="center">
+                        <label>
+                            <input name="visibility"
+                                   type="radio"
+                                   value="BOTH"
+                                   required
+                                   {% if not perms.knock.view_only_free and not perms.knock.view_only_work %}checked{% endif %} />
+                            <span>BOTH</span>
+                        </label>
+                        <label>
+                            <input name="visibility"
+                                   type="radio"
+                                   value="FREE"
+                                   required
+                                   {% if perms.knock.view_only_free and not perms.knock.view_only_work %}checked{% endif %} />
+                            <span>FREE</span>
+                        </label>
+                        <label>
+                            <input name="visibility"
+                                   type="radio"
+                                   value="NOTFREE"
+                                   required
+                                   {% if perms.knock.view_only_work and not perms.knock.view_only_free %}checked{% endif %} />
+                            <span>NOT FOR FREE</span>
+                        </label>
+                    </p>
                     <button type="submit" class="btn btn-dark btn-lg">Save Changes</button>
                 </form>
             </div>

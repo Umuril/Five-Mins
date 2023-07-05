@@ -1,3 +1,4 @@
 .requester.chip {
     cursor: pointer;
+    background-color: var(--user-chip-bg);
 }

@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import Group
 
 from knock.models import Knock, Profile
 
@@ -51,7 +52,22 @@ class UserUpdateForm(forms.ModelForm):
 
 class ProfileUpdateForm(forms.ModelForm):
     image = forms.ImageField(widget=forms.FileInput())
+    visibility = forms.CharField(widget=forms.HiddenInput())
 
     class Meta:
         model = Profile
         fields = ['gender', 'image']
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        only_free = Group.objects.get(name='Only Free Users')
+        only_work = Group.objects.get(name='Only Work Users')
+
+        self.instance.user.groups.remove(only_free)
+        self.instance.user.groups.remove(only_work)
+
+        if self.cleaned_data['visibility'] == 'FREE':
+            self.instance.user.groups.add(only_free)
+        elif self.cleaned_data['visibility'] == 'NOTFREE':
+            self.instance.user.groups.add(only_work)

@@ -1,7 +1,9 @@
 <a href="{% url 'knock-detail' knock.pk %}">
     <li class="{{ knock.get_status_display.lower.split|join:"_" }}">
         <div class="knock">
-            <div class="title">{{ knock.title }}</div>
+            <div class="title">
+                <strong>{{ knock.title }}</strong>
+            </div>
             <div class="request_date">
                 {{ knock.request_date|date:"d/m/y" }}
                 <br />
@@ -18,11 +20,15 @@
             {% if knock.request_stars %}
                 <div class="request_stars">{% component "stars" stars=knock.request_stars %}</div>
             {% endif %}
-            {% comment %} <div class="category {{ knock.category.upper }}">{{ knock.category.upper }}</div> {% endcomment %}
+            <div class="category {{ knock.category.upper }}">{{ knock.category.upper }}</div>
             <div class="price">{{ knock.request_price|default:"Free" }}</div>
             {% if knock.assigned_to %}
                 <div class="assigned_to" onclick="location.href='{% url 'profile' knock.assigned_to.pk %}'; return false;">
                     <img width="20px" src="{{ knock.assigned_to.profile.image.url }}" title="{{ knock.assigned_to }}" />
+                </div>
+            {% else %}
+                <div class="chat_count">
+                    <span class="btn-floating btn-small">{{ knock.chats.count }}</span>
                 </div>
             {% endif %}
             {% if knock.work_stars %}

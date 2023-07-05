@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models import Avg, F, Q
 from django.urls import reverse
 from djmoney.models.fields import MoneyField
-from PIL import Image
+from PIL import Image, ImageOps
 
 GENDER_CHOICES = [
     ('M', 'Male'),
@@ -20,6 +20,9 @@ class Profile(models.Model):
 
     request_stars = models.FloatField(null=True, blank=True)
     work_stars = models.FloatField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.pk} {self.user} {self.gender} - [{self.request_stars} - {self.work_stars}]'
 
     def recalculate_stars(self):
         self.request_stars = Knock.objects.filter(requester=self.user).aggregate(Avg('request_stars'))['request_stars__avg']
@@ -42,6 +45,7 @@ class Profile(models.Model):
             if img.height > 300 or img.width > 300:
                 output_size = (300, 300)
                 img.thumbnail(output_size)
+                img = ImageOps.exif_transpose(img)
                 img.save(self.image.path)
 
 

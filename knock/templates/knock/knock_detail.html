@@ -22,23 +22,23 @@
                             {% csrf_token %}
                             <div class="rate">
                                 <label for="rate-1">
-                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-o"></i>
                                 </label>
                                 <input type="radio" name="rating" value="1" id="rate-1" required />
                                 <label for="rate-2">
-                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-o"></i>
                                 </label>
                                 <input type="radio" name="rating" value="2" id="rate-2" required />
                                 <label for="rate-3">
-                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-o"></i>
                                 </label>
                                 <input type="radio" name="rating" value="3" id="rate-3" required />
                                 <label for="rate-4">
-                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-o"></i>
                                 </label>
                                 <input type="radio" name="rating" value="4" id="rate-4" required />
                                 <label for="rate-5">
-                                    <i class="fa fa-star"></i>
+                                    <i class="fa fa-star-o"></i>
                                 </label>
                                 <input type="radio" name="rating" value="5" id="rate-5" required />
                                 <input class="btn-small" type="submit" value="Rate">
@@ -64,23 +64,23 @@
                                 {% csrf_token %}
                                 <div class="rate">
                                     <label for="rate-1">
-                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
                                     </label>
                                     <input type="radio" name="rating" value="1" id="rate-1" required />
                                     <label for="rate-2">
-                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
                                     </label>
                                     <input type="radio" name="rating" value="2" id="rate-2" required />
                                     <label for="rate-3">
-                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
                                     </label>
                                     <input type="radio" name="rating" value="3" id="rate-3" required />
                                     <label for="rate-4">
-                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
                                     </label>
                                     <input type="radio" name="rating" value="4" id="rate-4" required />
                                     <label for="rate-5">
-                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-o"></i>
                                     </label>
                                     <input type="radio" name="rating" value="5" id="rate-5" required />
                                     <input class="btn-small" type="submit" value="Rate">
@@ -124,9 +124,9 @@
                     <li>
                         <br>
                         {% component_block "user_chip" user=knock_submit.user as_request=False %}
-                        {% fill "url" %}{% url 'knock-assign_to' knock.pk knock_submit.user.pk %}{% endfill %}
                     {% endcomponent_block %}
                     <a class="btn-floating" href="{% url 'chat' knock.pk knock_submit.user.pk %}"><i class="fa fa-comments"></i></a>
+                    <a class="btn-floating" href="{% url 'knock-assign_to' knock.pk knock_submit.user.pk %}"><i class="fa fa-check"></i></a>
                     <br>
                     <small title="{{ knock_submit.submit_time|date:"c" }}">{{ knock_submit.submit_time }}</small>
                 </li>
@@ -152,8 +152,12 @@
             {% endif %}
         {% endif %}
 
-        {% if user.pk != knock.requester.pk and user not in knock.submits.all and not knock.assigned_to and perms.knock.can_submit_for_knocks %}
+        {% if user.pk != knock.requester.pk and user not in knock.submits.all and not knock.assigned_to %}
             <a class="btn" href="{% url 'knock-submit' knock.pk %}">Submit</a>
+        {% endif %}
+
+        {% if user.pk != knock.requester.pk and user in knock.submits.all and not knock.assigned_to %}
+            <a class="btn" href="{% url 'knock-unsubmit' knock.pk %}">Unsubmit</a>
         {% endif %}
 
         {% if user.pk != knock.requester.pk and not knock.request_stars %}
@@ -181,6 +185,7 @@
                 document.querySelectorAll('.rate .fa').forEach((e, i) => {
                     e.classList.remove('fa-star');
                     e.classList.remove('fa-star-half-o');
+                    e.classList.remove('fa-star-o');
                     e.classList.remove('checked');
 
                     if (i < idx) {
@@ -194,7 +199,7 @@
                     }
 
                     if (i > idx) {
-                        e.classList.add('fa-star');
+                        e.classList.add('fa-star-o');
                     }
                 });
             };
@@ -203,6 +208,7 @@
                 document.querySelectorAll('.rate .fa').forEach((e, i) => {
                     e.classList.remove('fa-star');
                     e.classList.remove('fa-star-half-o');
+                    e.classList.remove('fa-star-o');
                     e.classList.remove('checked');
                     e.classList.remove('confirmed');
 
@@ -212,7 +218,7 @@
                     }
 
                     if (i > idx) {
-                        e.classList.add('fa-star');
+                        e.classList.add('fa-star-o');
                     }
                 });
             };

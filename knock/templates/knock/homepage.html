@@ -2,7 +2,7 @@
 
 {% block content %}
     {% if my_knocks %}
-        <h5 class="center">My Knock Knocks</h5>
+        <h5 class="center home-title">MY Knock-Knocks</h5>
         <ul class="browser-default knocks">
             {% for knock in my_knocks %}
                 {% component "knocky" knock=knock %}
@@ -13,7 +13,7 @@
     {% endif %}
 
     {% if my_submits %}
-        <h5 class="center">My submits</h5>
+        <h5 class="center home-title">My submits</h5>
         <ul class="browser-default knocks">
             {% for knock in my_submits %}
                 {% component "knocky" knock=knock %}
@@ -24,7 +24,7 @@
     {% endif %}
 
     {% if last_updated_knocks %}
-        <h5 class="center">List of Knock Knocks</h5>
+        <h5 class="center home-title">Knock-Knocks</h5>
         <ul class="browser-default knocks">
             {% for knock in last_updated_knocks %}
                 {% component "knocky" knock=knock %}

@@ -1,18 +1,5 @@
 {% extends "knock/base.html" %}
 
-{% block page-css %}
-    <style>
-        .rounded-circle {
-            border-radius: 100%;
-        }
-
-        .account-img {
-            height: 100px;
-            width: 100px;
-        }
-    </style>
-{% endblock page-css %}
-
 {% block content %}
 
     <div class="row">
@@ -24,8 +11,8 @@
                  class="rounded-circle account-img"
                  src="{{ user_profile.profile.image.url }}" />
             <p>
-                Request {% component "stars" stars=user.profile.request_stars %}
-                - Work {% component "stars" stars=user.profile.work_stars %}
+                Request {% component "stars" stars=user_profile.profile.request_stars %}
+                - Work {% component "stars" stars=user_profile.profile.work_stars %}
             </p>
         </div>
         <div class="center">
