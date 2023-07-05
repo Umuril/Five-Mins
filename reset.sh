@@ -34,8 +34,3 @@ python3 manage.py progress_knock --done -n 100
 python3 manage.py rate_knock -n 40
 python3 manage.py runapscheduler
 ##### CUSTOM PHASE #####
-
-
-##### CLEAN UP PHASE #####
-rm -fr knock/migrations/0*.py
-##### CLEAN UP PHASE #####
