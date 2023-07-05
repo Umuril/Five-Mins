@@ -15,16 +15,79 @@
             {% if knock.request_stars %}
                 <br>
                 {% component "stars" stars=knock.request_stars %}
+            {% else %}
+                {% if knock.status == 'D' %}
+                    {% if user.pk == knock.requester.pk and not knock.work_stars or user.pk == knock.assigned_to.pk and not knock.request_stars %}
+                        <form action="{% url 'knock-rating' knock.pk %}" method="post">
+                            {% csrf_token %}
+                            <div class="rate">
+                                <label for="rate-1">
+                                    <i class="fa fa-star"></i>
+                                </label>
+                                <input type="radio" name="rating" value="1" id="rate-1" />
+                                <label for="rate-2">
+                                    <i class="fa fa-star"></i>
+                                </label>
+                                <input type="radio" name="rating" value="2" id="rate-2" />
+                                <label for="rate-3">
+                                    <i class="fa fa-star"></i>
+                                </label>
+                                <input type="radio" name="rating" value="3" id="rate-3" />
+                                <label for="rate-4">
+                                    <i class="fa fa-star"></i>
+                                </label>
+                                <input type="radio" name="rating" value="4" id="rate-4" />
+                                <label for="rate-5">
+                                    <i class="fa fa-star"></i>
+                                </label>
+                                <input type="radio" name="rating" value="5" id="rate-5" />
+                                <input class="btn-small" type="submit" value="Rate">
+                            </div>
+                        </form>
+                    {% endif %}
+                {% endif %}
             {% endif %}
         </div>
         {% if knock.assigned_to %}
+            <p></p>
             <div>
-                <strong>Assignee</strong>
+                <strong>Assigned to</strong>
                 <br />
                 {% component "user_chip" user=knock.assigned_to as_request=False %}
                 {% if knock.work_stars %}
                     <br>
                     {% component "stars" stars=knock.work_stars %}
+                {% else %}
+                    {% if knock.status == 'D' %}
+                        {% if user.pk == knock.requester.pk and not knock.work_stars or user.pk == knock.assigned_to.pk and not knock.request_stars %}
+                            <form action="{% url 'knock-rating' knock.pk %}" method="post">
+                                {% csrf_token %}
+                                <div class="rate">
+                                    <label for="rate-1">
+                                        <i class="fa fa-star"></i>
+                                    </label>
+                                    <input type="radio" name="rating" value="1" id="rate-1" />
+                                    <label for="rate-2">
+                                        <i class="fa fa-star"></i>
+                                    </label>
+                                    <input type="radio" name="rating" value="2" id="rate-2" />
+                                    <label for="rate-3">
+                                        <i class="fa fa-star"></i>
+                                    </label>
+                                    <input type="radio" name="rating" value="3" id="rate-3" />
+                                    <label for="rate-4">
+                                        <i class="fa fa-star"></i>
+                                    </label>
+                                    <input type="radio" name="rating" value="4" id="rate-4" />
+                                    <label for="rate-5">
+                                        <i class="fa fa-star"></i>
+                                    </label>
+                                    <input type="radio" name="rating" value="5" id="rate-5" />
+                                    <input class="btn-small" type="submit" value="Rate">
+                                </div>
+                            </form>
+                        {% endif %}
+                    {% endif %}
                 {% endif %}
             </div>
         {% endif %}
@@ -33,7 +96,7 @@
 
     </div>
 
-    {% if user.is_authenticated and user.pk == knock.requester.pk and knock.chats.count > 0 %}
+    {% if user.is_authenticated and user.pk == knock.requester.pk and not knock.work_stars and knock.chats.count > 0 %}
         <hr class="space">
 
         <div class="center">
@@ -79,9 +142,9 @@
 </div>
 {% endif %}
 
-{% if user.is_authenticated %}
-    <hr class="space">
+<hr class="space">
 
+{% if user.is_authenticated %}
     <div class="center">
         {% if user.pk == knock.requester.pk %}
             {% if knock.status == 'O' or knock.status == 'R' %}
@@ -99,42 +162,12 @@
             {% endif %}
         {% endif %}
 
-        {% if knock.status == 'D' %}
-            {% if user.pk == knock.requester.pk and not knock.work_stars or user.pk == knock.assigned_to.pk and not knock.request_stars %}
-                <form action="{% url 'knock-rating' knock.pk %}" method="post">
-                    {% csrf_token %}
-                    <div class="rate" style="margin: 30px 0">
-                        <label for="rate-1">
-                            <i class="fa fa-star fa-2xl"></i>
-                        </label>
-                        <input type="radio" name="rating" value="1" id="rate-1">
-                    </input>
-                    <label for="rate-2">
-                        <i class="fa fa-star fa-2xl"></i>
-                    </label>
-                    <input type="radio" name="rating" value="2" id="rate-2">
-                </input>
-                <label for="rate-3">
-                    <i class="fa fa-star fa-2xl"></i>
-                </label>
-                <input type="radio" name="rating" value="3" id="rate-3">
-            </input>
-            <label for="rate-4">
-                <i class="fa fa-star fa-2xl"></i>
-            </label>
-            <input type="radio" name="rating" value="4" id="rate-4">
-        </input>
-        <label for="rate-5">
-            <i class="fa fa-star fa-2xl"></i>
-        </label>
-        <input type="radio" name="rating" value="5" id="rate-5">
-    </input>
-</div>
-<input class="btn" type="submit" value="Rate other user">
-</form>
-{% endif %}
-{% endif %}
-</div>
+        {% if user.pk == knock.requester.pk and not knock.work_stars %}
+            {% if knock.assigned_to and user.pk != knock.assigned_to.pk %}
+                <a class="btn" href="{% url 'chat' knock.pk knock.assigned_to.pk %}">Chat with {{ knock.assigned_to }}</a>
+            {% endif %}
+        {% endif %}
+    </div>
 {% endif %}
 
 <hr class="space">
