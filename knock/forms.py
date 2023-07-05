@@ -37,8 +37,6 @@ class UserRegisterForm(UserCreationForm):
         model = get_user_model()
         fields = ['username', 'email', 'password1', 'password2']
 
-# Create a UserUpdateForm to update a username and email
-
 
 class UserUpdateForm(forms.ModelForm):
     email = forms.EmailField()
@@ -49,9 +47,6 @@ class UserUpdateForm(forms.ModelForm):
         help_texts = {
             'username': None,
         }
-
-
-# Create a ProfileUpdateForm to update image.
 
 
 class ProfileUpdateForm(forms.ModelForm):

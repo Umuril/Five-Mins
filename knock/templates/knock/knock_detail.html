@@ -17,30 +17,30 @@
                 {% component "stars" stars=knock.request_stars %}
             {% else %}
                 {% if knock.status == 'D' %}
-                    {% if user.pk == knock.requester.pk and not knock.work_stars or user.pk == knock.assigned_to.pk and not knock.request_stars %}
+                    {% if user.pk == knock.assigned_to.pk and not knock.request_stars %}
                         <form action="{% url 'knock-rating' knock.pk %}" method="post">
                             {% csrf_token %}
                             <div class="rate">
                                 <label for="rate-1">
                                     <i class="fa fa-star"></i>
                                 </label>
-                                <input type="radio" name="rating" value="1" id="rate-1" />
+                                <input type="radio" name="rating" value="1" id="rate-1" required />
                                 <label for="rate-2">
                                     <i class="fa fa-star"></i>
                                 </label>
-                                <input type="radio" name="rating" value="2" id="rate-2" />
+                                <input type="radio" name="rating" value="2" id="rate-2" required />
                                 <label for="rate-3">
                                     <i class="fa fa-star"></i>
                                 </label>
-                                <input type="radio" name="rating" value="3" id="rate-3" />
+                                <input type="radio" name="rating" value="3" id="rate-3" required />
                                 <label for="rate-4">
                                     <i class="fa fa-star"></i>
                                 </label>
-                                <input type="radio" name="rating" value="4" id="rate-4" />
+                                <input type="radio" name="rating" value="4" id="rate-4" required />
                                 <label for="rate-5">
                                     <i class="fa fa-star"></i>
                                 </label>
-                                <input type="radio" name="rating" value="5" id="rate-5" />
+                                <input type="radio" name="rating" value="5" id="rate-5" required />
                                 <input class="btn-small" type="submit" value="Rate">
                             </div>
                         </form>
@@ -59,30 +59,30 @@
                     {% component "stars" stars=knock.work_stars %}
                 {% else %}
                     {% if knock.status == 'D' %}
-                        {% if user.pk == knock.requester.pk and not knock.work_stars or user.pk == knock.assigned_to.pk and not knock.request_stars %}
+                        {% if user.pk == knock.requester.pk and not knock.work_stars %}
                             <form action="{% url 'knock-rating' knock.pk %}" method="post">
                                 {% csrf_token %}
                                 <div class="rate">
                                     <label for="rate-1">
                                         <i class="fa fa-star"></i>
                                     </label>
-                                    <input type="radio" name="rating" value="1" id="rate-1" />
+                                    <input type="radio" name="rating" value="1" id="rate-1" required />
                                     <label for="rate-2">
                                         <i class="fa fa-star"></i>
                                     </label>
-                                    <input type="radio" name="rating" value="2" id="rate-2" />
+                                    <input type="radio" name="rating" value="2" id="rate-2" required />
                                     <label for="rate-3">
                                         <i class="fa fa-star"></i>
                                     </label>
-                                    <input type="radio" name="rating" value="3" id="rate-3" />
+                                    <input type="radio" name="rating" value="3" id="rate-3" required />
                                     <label for="rate-4">
                                         <i class="fa fa-star"></i>
                                     </label>
-                                    <input type="radio" name="rating" value="4" id="rate-4" />
+                                    <input type="radio" name="rating" value="4" id="rate-4" required />
                                     <label for="rate-5">
                                         <i class="fa fa-star"></i>
                                     </label>
-                                    <input type="radio" name="rating" value="5" id="rate-5" />
+                                    <input type="radio" name="rating" value="5" id="rate-5" required />
                                     <input class="btn-small" type="submit" value="Rate">
                                 </div>
                             </form>

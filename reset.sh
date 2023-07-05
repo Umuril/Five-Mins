@@ -6,6 +6,7 @@ unzip -n static/ext/\*.zip -d static/ext/
 
 
 ##### CLEAN UP PHASE #####
+rm -fr static/ext/Fork-Awesome-1.2.0/{less,scss,src}
 rm -f db.sqlite3
 ##### CLEAN UP PHASE #####
 

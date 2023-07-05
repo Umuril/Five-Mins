@@ -19,7 +19,6 @@ from knock.models import (Knock, KnockChat, KnockChatMessage, KnockSubmit,
 
 
 def homepage(request):
-
     my_knocks = []
     my_submits = []
 
@@ -31,8 +30,8 @@ def homepage(request):
         my_submits = Knock.objects.filter(submits=request.user.pk, status=Knock.Status.OPEN).select_related('requester')
         last_updated_knocks = Knock.objects.exclude(first_filter | second_filter).select_related('requester').order_by('-update_time')
     else:
-        last_updated_knocks = Knock.objects.all().select_related('requester').order_by('-update_time')
-        # last_updated_knocks = Knock.objects.all().select_related('requester').order_by('?')
+        # last_updated_knocks = Knock.objects.all().select_related('requester').order_by('-update_time')
+        last_updated_knocks = Knock.objects.all().select_related('requester').order_by('?')
 
     paginator = Paginator(last_updated_knocks, 20)
     page = request.GET.get('page')
@@ -243,8 +242,6 @@ def search(request):
         filters += [Q(request_date=date)]
     except ValueError:
         pass
-        # if len(title) == 0 and len(category) == 0 and len(status) == 0:
-        # date = datetime.date.today()
 
     filter_acc = Q()
     if len(filters) > 0:
@@ -294,9 +291,10 @@ def chat(request, knock_pk, user_pk):
         return redirect(reverse('chat', args=[knock_pk, user_pk]))
 
     try:
-        knock_chat = KnockChat.objects.select_related(
-            'user', 'knock__requester').prefetch_related('messages__sender').get(
-            knock=knock_pk, user=user_pk)
+        knock_chat = KnockChat.objects \
+            .select_related('user', 'knock__requester') \
+            .prefetch_related('messages__sender') \
+            .get(knock=knock_pk, user=user_pk)
     except KnockChat.DoesNotExist:
         knock_chat = KnockChat()
         knock_chat.knock = get_object_or_404(Knock, pk=knock_pk)
