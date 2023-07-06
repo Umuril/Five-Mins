@@ -8,6 +8,12 @@ Most features are available to registered users.
 As a guest, you can browse Knock-Knocks to see other users' requests.  
 Upon registration, you can create new requests and submit them to help other users, sometimes with something in return.  
 
+### How to test locally
+Just run:
+```bash
+./startup.sh
+```
+
 ### Technology Used
 - Framework: Django
 - Database: SQLite3
