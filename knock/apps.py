@@ -7,6 +7,5 @@ class KnockConfig(AppConfig):
     name = 'knock'
 
     def ready(self):
-        # pylint: disable=import-outside-toplevel
-        from knock import signals
-        print(signals.__name__)
+        # pylint: disable=import-outside-toplevel,unused-import
+        from knock import signals  # NOQA
