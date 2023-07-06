@@ -1,35 +1,39 @@
-# Five-Mins
+# Knock-Knock
 ## Connecting People in Need with Available Help
 
-Five-Mins is a website dedicated to fostering a supportive community by connecting individuals in need of assistance with those who have available free time. Our platform allows people to find help when they need it most.
+Knock-Knock is a website dedicated to fostering a supportive community by connecting individuals in need of assistance with those who have available free time. Our platform allows people to find help when they need it most.
 
 ### Website Features
-Most features are available to registered users. Upon registration, you can specify whether you are here for work or to ask for help.
+Most features are available to registered users.  
+As a guest, you can browse Knock-Knocks to see other users' requests.  
+Upon registration, you can create new requests and submit them to help other users, sometimes with something in return.  
 
 ### Technology Used
-- Django
+- Framework: Django
+- Database: SQLite3
 
 ### Project Goals
-- [ ] Guests can view recently closed works or new requests from users.
-- [ ] Guests can search for requests based on price, time, or location.
-- [ ] Users can create new assistance requests.
-- [ ] Users and workers can view closed and in-progress requests (history).
-- [ ] Users and workers can coordinate and communicate after a match is made.
-- [ ] Workers can request additional information before accepting a Knock Knock.
-- [ ] The admin has the ability to ban workers and users.
-- [ ] The admin can generate random data for testing purposes (e.g., create users, workers, Knock Knocks, and reply to Knock Knocks).
+- [x] Guests can view the latest updated Knock-Knocks to see other users' activities and be encouraged to register.
+- [x] Guests can search for requests based on title, day and/or category.
+- [x] Users can create new assistance requests called Knock-Knock.
+- [x] Users can view their homepage, which displays their current active Knock-Knocks, the Knock-Knocks they are trying to apply for, and a list of possible new works to apply for.
+- [x] Users can communicate via an internal chat to coordinate before, during, and after a match is made.
+- [x] The admin can generate random data for testing purposes using CLI commands.
+- [x] Determine the flow for matching Users.
+- [x] Implement a rating system where Users can rate each other based on the quality of work done.
 
 ### Pending Decisions
-- [ ] Determine the flow for matching users with workers.
-- [ ] Allow multiple workers to work on a single Knock Knock.
-- [ ] Implement a rating system where users and workers can rate each other based on the quality of work done.
-- [ ] Enable workers to set their default availability time.
+- [ ] Allowing multiple workers to work on a single Knock-Knock.
+- [ ] Enabling workers to set their default availability time.
 
 ### Roles
-- Guest (Not logged in user)
-- User (Logged in user)
-- Worker (Registered user offering assistance)
+- Guest (Not logged-in user)
+- User (Logged-in user)
+- Visibility-Narrowed (Logged-in users who are interested in free or paid works)
 - Admin (Website administrator)
 
 ### Screenshot
-Screenshot to be added.
+<img src="https://github.com/Umuril/Knock-Knock/assets/3881068/70718594-d16f-49c0-8ef9-75d95d319974" width="200">
+<img src="https://github.com/Umuril/Knock-Knock/assets/3881068/6a8acf65-0710-4a37-93de-f9d673042e66" width="200">
+<img src="https://github.com/Umuril/Knock-Knock/assets/3881068/986630d1-dc7c-47f4-913d-33a2dfc92997" width="200">
+<img src="https://github.com/Umuril/Knock-Knock/assets/3881068/33a39326-8dd8-46cd-a0d4-2a3f985eaf8d" width="200">
