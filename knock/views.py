@@ -21,6 +21,7 @@ from knock.models import (Knock, KnockChat, KnockChatMessage, KnockSubmit,
 def homepage(request):
     my_knocks = []
     my_submits = []
+    page = request.GET.get('page')
 
     if request.user.is_authenticated:
 
@@ -33,15 +34,15 @@ def homepage(request):
 
         first_filter = Q(requester=request.user.pk) & ~Q(status=Knock.Status.CLOSED) & Q(work_stars__isnull=True)
         second_filter = Q(assigned_to=request.user.pk) & ~Q(status=Knock.Status.CLOSED) & Q(request_stars__isnull=True)
-        my_knocks = Knock.objects.filter(first_filter | second_filter).select_related('requester').order_by('-update_time')
-
+        third_filter = Q(status=Knock.Status.OPEN) & ~Q(requester=request.user.pk)
         four_filter = Q(submits=request.user.pk, status=Knock.Status.OPEN)
         five_filter = Q(chats__user=request.user.pk, status=Knock.Status.OPEN)
 
-        my_submits = Knock.objects.filter(four_filter).select_related('requester') \
-            .union(Knock.objects.filter(five_filter).select_related('requester')).order_by('-update_time')
+        if not page or int(page) <= 1:
+            my_knocks = Knock.objects.filter(first_filter | second_filter).select_related('requester').order_by('-update_time')
+            my_submits = Knock.objects.filter(four_filter).select_related('requester') \
+                .union(Knock.objects.filter(five_filter).select_related('requester')).order_by('-update_time')
 
-        third_filter = Q(status=Knock.Status.OPEN) & ~Q(requester=request.user.pk)
         last_updated_knocks = Knock.objects.filter(auth_filter & third_filter).exclude(
             five_filter).select_related('requester').order_by('-update_time')
     else:
@@ -49,7 +50,6 @@ def homepage(request):
         last_updated_knocks = Knock.objects.all().select_related('requester').order_by('?')
 
     paginator = Paginator(last_updated_knocks, 20)
-    page = request.GET.get('page')
 
     try:
         last_updated_knocks = paginator.page(page)

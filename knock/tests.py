@@ -26,7 +26,7 @@ class KnockTestCase(TestCase):
         super_user.profile = Profile()
         super_user.profile.save()
 
-        user = get_user_model().objects.create(username='pippo', password='toor')
+        user = get_user_model().objects.create(username='pippo', password='pippo')
         user.save()
 
         user.profile = Profile()
@@ -47,7 +47,7 @@ class KnockTestCase(TestCase):
         last_updated_knocks = response.context['last_updated_knocks']
         self.assertIsNotNone(last_updated_knocks)
 
-    def test(self):
+    def test_update_stars_on_users_profile(self):
         knock = Knock.objects.get(pk=1)
         cli = Client()
         cli.login(username='root', password='toor')
